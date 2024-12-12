@@ -15,10 +15,10 @@ st.title("Reconnaissance de Maladies des Plantes")
 model_choice = st.selectbox("Choisissez un modèle :", ["Model 1", "Model 2", "Model 3", "Model 4"])
 
 models = {
-    "Model 1": "C:/Users/anasm/Downloads/Reco-Plantes/models/Anas_Essai_1_MOB_L2.keras",
-    "Model 2": "C:/Users/anasm/Downloads/Reco-Plantes/models/Anas_Essai_1_MOB_Repeat.keras",
-    "Model 3": "C:/Users/anasm/Downloads/Reco-Plantes/models/leila_best_model_cnn_TEM3.keras",
-    "Model 4": "C:/Users/anasm/Downloads/Reco-Plantes/models/model_cnn_4_best.keras",
+    "Model 1": "models/Anas_Essai_1_MOB_L2.keras",
+    "Model 2": "models/Anas_Essai_1_MOB_Repeat.keras",
+    "Model 3": "models/leila_best_model_cnn_TEM3.keras",
+    "Model 4": "models/model_cnn_4_best.keras",
 }
 model_path = models[model_choice]
 model = load_model(model_path)
