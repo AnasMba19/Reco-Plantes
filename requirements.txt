@@ -1,6 +1,6 @@
 streamlit==1.23.0
 tensorflow
-pillow
+pillow==9.5.0
 numpy
 scipy
 matplotlib
