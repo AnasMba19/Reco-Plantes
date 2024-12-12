@@ -1,4 +1,4 @@
-﻿tensorflow<2.14
+tensorflow<2.14
 streamlit<1.26
 pillow<10
 numpy
