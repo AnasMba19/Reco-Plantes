@@ -1,30 +1,24 @@
 import streamlit as st
 from models.main import load_model, preprocess_image, predict_image, class_names
 
-# Fonction pour définir un fond en dégradé avec un style global
+# Fonction pour définir un style global avec un fond en dégradé
 def set_custom_background_and_style():
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
         .stApp {
             background: linear-gradient(120deg, #28a745, #ffc107); /* Dégradé vert -> jaune */
             color: #FFFFFF; /* Texte blanc */
+            font-family: 'Roboto', sans-serif; /* Police élégante */
             padding: 20px;
         }
         h1, h2, h3, p {
-            color: #FFFFFF; /* Texte blanc */
+            color: #FFFFFF;
             background-color: #006400; /* Fond vert foncé */
             padding: 15px;
             border-radius: 8px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        .stMarkdown, .stSelectbox, .stButton, .stFileUploader {
-            background-color: #006400; /* Fond vert foncé */
-            color: #FFFFFF;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .stButton > button {
             background-color: #4CAF50; /* Vert bouton */
@@ -37,15 +31,21 @@ def set_custom_background_and_style():
             transition: transform 0.2s ease, background-color 0.2s ease;
         }
         .stButton > button:hover {
-            background-color: #45a049; /* Vert bouton survol */
+            background-color: #45a049;
             transform: scale(1.05);
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #FFFFFF;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-# Appeler la fonction pour définir le style
+# Appeler la fonction pour appliquer le style
 set_custom_background_and_style()
 
 # Titre principal
@@ -57,9 +57,9 @@ st.markdown(
     Bienvenue ! Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes.
 
     **Instructions :**
-    1. Téléchargez une image en cliquant sur le bouton "Browse Files".
-    2. Choisissez un modèle dans le menu déroulant.
-    3. Obtenez des résultats instantanément ! 🌟
+    1. Téléchargez une image en cliquant sur le bouton **Browse Files**.
+    2. Sélectionnez un modèle dans le menu déroulant.
+    3. Consultez les résultats instantanément ! 🌟
     """
 )
 
@@ -97,3 +97,16 @@ if uploaded_file is not None:
     # Ajouter une section pour afficher des statistiques
     st.markdown("### Statistiques")
     st.write(f"Confiance de la prédiction : {confidence:.2f}%")
+
+# Footer avec crédits
+st.markdown(
+    """
+    <footer>
+        © 2024 Reconnaissance des Maladies des Plantes | Développé par Anas Mba19
+        <br>
+        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">GitHub</a> | 
+        <a href="https://streamlit.io" target="_blank">Streamlit</a>
+    </footer>
+    """,
+    unsafe_allow_html=True
+)
