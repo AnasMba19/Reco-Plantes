@@ -25,7 +25,6 @@ def set_custom_background_and_style():
         }}
 
         /* Couche semi-transparente pour améliorer la lisibilité du texte */
-        /* On va encapsuler les blocs dans des containers personnalisés */
         .content-block {{
             background-color: rgba(0, 100, 0, 0.8);
             color: #FFFFFF;
@@ -39,6 +38,7 @@ def set_custom_background_and_style():
             margin: 0 0 10px 0;
         }}
 
+        /* Styles pour les onglets */
         .stTabs [data-baseweb="tab"] {{
             background: rgba(0, 100, 0, 0.8);
             border: none;
@@ -49,13 +49,13 @@ def set_custom_background_and_style():
             color: #FFFFFF;
         }}
 
-        .stTabs .stTabs-header {
+        .stTabs .stTabs-header {{
             border-bottom: none;
-        }
+        }}
 
-        .stTabs .stTabs-nav {
+        .stTabs .stTabs-nav {{
             background: transparent;
-        }
+        }}
 
         .stProgress > div > div > div {{
             background-color: #4CAF50;
