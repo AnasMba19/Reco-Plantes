@@ -27,27 +27,26 @@ def set_custom_style():
 
         /* Personnalisation de la barre latérale */
         [data-testid="stSidebar"] {{
-            background: linear-gradient(135deg, #1e5631, #2e8b57); /* Dégradé vert assorti */
+            background: linear-gradient(135deg, #2e8b57, #76c7c0); /* Dégradé vert assorti */
             color: white;
             border-right: 3px solid #006400; /* Bordure élégante */
             box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+            padding: 20px;
         }}
 
         [data-testid="stSidebar"] .stButton > button {{
-            background-color: #2e8b57;
+            background-color: #3cb371;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 10px;
             font-weight: bold;
-            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease-in-out;
+            transition: all 0.2s;
+            padding: 12px;
         }}
 
         [data-testid="stSidebar"] .stButton > button:hover {{
-            background-color: #3cb371;
-            transform: scale(1.08);
+            background-color: #4CAF50;
+            transform: scale(1.05);
         }}
 
         [data-testid="stSidebar"] .stSelectbox {{
@@ -70,6 +69,12 @@ def set_custom_style():
             padding: 10px;
             font-size: 14px;
             font-weight: bold;
+        }}
+
+        /* Ajout d'espacements et alignements */
+        [data-testid="stSidebar"] .stFileUploader, [data-testid="stSidebar"] .stSelectbox {{
+            margin-top: 10px;
+            margin-bottom: 20px;
         }}
 
         </style>
