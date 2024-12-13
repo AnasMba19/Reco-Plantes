@@ -7,7 +7,7 @@ def set_custom_background_and_style():
         """
         <style>
         .stApp {
-            background: linear-gradient(135deg, #2ecc71, #f1c40f); /* Dégradé vert -> jaune */
+            background: linear-gradient(120deg, #28a745, #ffc107); /* Dégradé vert -> jaune */
             color: #FFFFFF; /* Texte blanc */
             padding: 20px;
         }
