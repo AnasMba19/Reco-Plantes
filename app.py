@@ -11,8 +11,10 @@ except ImportError:
     lottie_json = None
 
 def set_custom_style():
-    # Utilisation des images locales pour le fond et le logo
-    background_url = "./assets/background.jpg"  # Chemin vers l'image de fond
+    # URLs des images depuis GitHub
+    background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/background.jpg"
+    logo_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/logo_recoplantes.jpg"
+
     st.markdown(
         f"""
         <style>
@@ -80,6 +82,17 @@ def set_custom_style():
         unsafe_allow_html=True
     )
 
+    # Ajouter la bannière avec le logo
+    st.markdown(
+        f"""
+        <div class="banner">
+            <img src="{logo_url}" alt="Logo RecoPlantes">
+            <h1>Reconnaissance de Maladies des Plantes</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 set_custom_style()
 
 # Barre latérale
@@ -105,17 +118,6 @@ model_descriptions = {
 }
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
-
-# Bannière avec le logo et le titre
-st.markdown(
-    """
-    <div class="banner">
-        <img src="./assets/logo_recoplantes.jpg" alt="Logo RecoPlantes">
-        <h1>Reconnaissance de Maladies des Plantes</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 # Instructions
 st.markdown(
