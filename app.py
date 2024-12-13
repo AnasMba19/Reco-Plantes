@@ -10,27 +10,36 @@ try:
 except ImportError:
     lottie_json = None
 
-def set_custom_background_and_style():
-    # Image de fond cohérente avec le thème "plantes"
+def set_custom_style():
     background_url = "https://images.unsplash.com/photo-1516651022221-3c83666ae09c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     st.markdown(
         f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        
-        .stApp {{
+
+        html, body {{
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background: url("{background_url}") no-repeat center center fixed;
             background-size: cover;
             font-family: 'Roboto', sans-serif;
         }}
 
-        /* Couche semi-transparente pour améliorer la lisibilité du texte */
+        /* Conteneur principal Streamlit */
+        [data-testid="stAppViewContainer"] > .main {{
+            background-color: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(5px);
+            padding: 40px;
+        }}
+
+        /* Contenu global */
         .content-block {{
-            background-color: rgba(0, 100, 0, 0.8);
+            background-color: rgba(34, 139, 34, 0.85);
             color: #FFFFFF;
-            padding: 15px 20px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }}
 
@@ -38,29 +47,32 @@ def set_custom_background_and_style():
             margin: 0 0 10px 0;
         }}
 
-        /* Styles pour les onglets */
+        /* Onglets */
         .stTabs [data-baseweb="tab"] {{
-            background: rgba(0, 100, 0, 0.8);
+            background: rgba(34, 139, 34, 0.7);
             border: none;
+            color: #fff;
         }}
 
         .stTabs [data-baseweb="tab"].stTabs-tab--selected {{
-            background: rgba(0, 100, 0, 1);
+            background: rgba(34, 139, 34, 1);
             color: #FFFFFF;
         }}
 
         .stTabs .stTabs-header {{
-            border-bottom: none;
+            border-bottom: none !important;
         }}
 
         .stTabs .stTabs-nav {{
             background: transparent;
         }}
 
+        /* Barre de progression de confiance */
         .stProgress > div > div > div {{
             background-color: #4CAF50;
         }}
 
+        /* Boutons */
         .stButton > button {{
             background-color: #4CAF50; 
             color: #FFFFFF;
@@ -68,41 +80,64 @@ def set_custom_background_and_style():
             padding: 10px 20px;
             border-radius: 5px;
             font-size: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease, background-color 0.2s ease;
         }}
 
         .stButton > button:hover {{
             background-color: #45a049;
-            transform: scale(1.05);
+            transform: scale(1.03);
         }}
 
-        footer {{
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #FFFFFF;
+        /* Sidebar */
+        [data-testid="stSidebar"] {{
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }}
 
+        [data-testid="stSidebar"] .stButton > button {{
+            background-color: #45a049;
+        }}
+
+        /* Carte résultat */
         .result-card {{
-            background-color: rgba(0,100,0,0.8);
+            background-color: rgba(34,139,34,0.9);
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }}
 
         .instructions-block {{
             line-height: 1.6;
+        }}
+
+        /* Footer */
+        footer {{
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #333;
+        }}
+
+        footer a {{
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+        }}
+
+        footer a:hover {{
+            text-decoration: underline;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-set_custom_background_and_style()
+set_custom_style()
 
-# Barre latérale pour les paramètres
+# Barre latérale
 st.sidebar.title("Paramètres")
 if st.sidebar.button("🔄 Réinitialiser"):
     st.experimental_rerun()
@@ -165,12 +200,12 @@ with tab_analyse:
         st.progress(confidence / 100.0)  
         st.write(f"{confidence:.2f}%")
 
-        st.markdown("[En savoir plus sur cette maladie](https://www.google.com)", unsafe_allow_html=True)
+        st.markdown("<p><a href='https://www.google.com' target='_blank'>En savoir plus sur cette maladie</a></p>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.warning("⚠️ Veuillez télécharger une image valide dans la barre latérale.")
 
-# Footer avec crédits
+# Footer
 st.markdown(
     """
     <footer>
