@@ -1,32 +1,36 @@
 import streamlit as st
-import base64
 from models.main import load_model, preprocess_image, predict_image, class_names
 
-# Fonction pour ajouter une image en arrière-plan
-def add_bg_from_local(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+# Fonction pour définir un fond en couleur avec un style global
+def set_custom_background_and_style():
     st.markdown(
-        f"""
+        """
         <style>
-        .stApp {{
-            background-image: url("data:image/jpeg;base64,{encoded_string.decode()}");
-            background-size: cover;
-            background-position: center;
-        }}
-        h1, h2, h3, p {{
-            background-color: rgba(255, 255, 255, 0.7); /* Blanc avec transparence */
-            padding: 10px;
+        .stApp {
+            background-color: #2E2E2E; /* Fond sombre */
+            color: #FFFFFF; /* Texte blanc */
+        }
+        h1, h2, h3, p {
+            color: #F1F1F1; /* Texte clair */
+        }
+        .stButton > button {
+            background-color: #4CAF50; /* Vert bouton */
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
             border-radius: 5px;
-            color: #000000; /* Texte noir */
-        }}
+            font-size: 16px;
+        }
+        .stButton > button:hover {
+            background-color: #45a049; /* Vert bouton survol */
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-# Appeler la fonction pour ajouter l'image de fond
-add_bg_from_local('assets/background.jpg')
+# Appeler la fonction pour définir le style
+set_custom_background_and_style()
 
 # Titre principal
 st.title("🌿 Reconnaissance de Maladies des Plantes")
