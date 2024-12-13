@@ -10,8 +10,9 @@ def add_bg_from_local(image_path):
         f"""
         <style>
         .stApp {{
-            background-image: url(data:image/{{"jpg"}};base64,{encoded_string.decode()});
+            background-image: url("data:image/jpeg;base64,{encoded_string.decode()}");
             background-size: cover;
+            background-position: center;
         }}
         </style>
         """,
