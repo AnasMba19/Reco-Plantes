@@ -11,10 +11,8 @@ except ImportError:
     lottie_json = None
 
 def set_custom_style():
-    # URLs des images depuis GitHub
+    # URL GitHub pour le fond et le logo
     background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/background.jpg"
-    logo_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/logo_recoplantes.jpg"
-
     st.markdown(
         f"""
         <style>
@@ -47,7 +45,6 @@ def set_custom_style():
             margin: 0 0 10px 0;
         }}
 
-        /* Style pour les boutons */
         .stButton > button {{
             background-color: #4CAF50; 
             color: #FFFFFF;
@@ -64,7 +61,6 @@ def set_custom_style():
             transform: scale(1.03);
         }}
 
-        /* Bannière avec logo */
         .banner {{
             display: flex;
             align-items: center;
@@ -78,17 +74,6 @@ def set_custom_style():
         }}
 
         </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Ajouter la bannière avec le logo
-    st.markdown(
-        f"""
-        <div class="banner">
-            <img src="{logo_url}" alt="Logo RecoPlantes">
-            <h1>Reconnaissance de Maladies des Plantes</h1>
-        </div>
         """,
         unsafe_allow_html=True
     )
@@ -118,6 +103,17 @@ model_descriptions = {
 }
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
+
+# Bannière avec le logo et le titre
+st.markdown(
+    """
+    <div class="banner">
+        <img src="https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/logo_recoplantes.jpg" alt="Logo RecoPlantes">
+        <h1>Reconnaissance de Maladies des Plantes</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Instructions
 st.markdown(
