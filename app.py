@@ -34,6 +34,10 @@ def set_custom_background_and_style():
             background-color: #45a049;
             transform: scale(1.05);
         }
+        .instructions {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
         footer {
             text-align: center;
             margin-top: 20px;
@@ -54,13 +58,18 @@ st.title("🌿 Reconnaissance de Maladies des Plantes")
 # Description de l'application
 st.markdown(
     """
+    <div class="instructions">
     Bienvenue ! Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes.
 
     **Instructions :**
-    1. Téléchargez une image en cliquant sur le bouton **Browse Files**.
-    2. Sélectionnez un modèle dans le menu déroulant.
-    3. Consultez les résultats instantanément ! 🌟
-    """
+    <ul>
+        <li>📂 Téléchargez une image en cliquant sur le bouton **Browse Files**.</li>
+        <li>🛠️ Sélectionnez un modèle dans le menu déroulant.</li>
+        <li>✨ Consultez les résultats instantanément !</li>
+    </ul>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
 # Séparateur visuel
@@ -82,21 +91,33 @@ models = {
 }
 model_path = models[model_choice]
 
+# Description dynamique des modèles
+model_descriptions = {
+    "Model 1": "Modèle basé sur MobileNet avec régularisation L2.",
+    "Model 2": "Modèle MobileNet avec augmentation des données.",
+    "Model 3": "Modèle CNN développé par Leila.",
+    "Model 4": "Modèle CNN avec optimisation avancée.",
+}
+st.info(f"ℹ️ **Description du modèle choisi :** {model_descriptions[model_choice]}")
+
 # Chargement du modèle
 model = load_model(model_path)
 
 # Téléchargement de l'image
 uploaded_file = st.file_uploader("Téléchargez une image", type=["jpg", "png"])
 if uploaded_file is not None:
-    st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-    input_shape = model.input_shape[1:3]
-    image_array = preprocess_image(uploaded_file, target_size=input_shape)
-    predicted_class, confidence = predict_image(model, image_array)
-    st.success(f"Résultat : {predicted_class} ({confidence:.2f}%)")
+    with st.spinner("Analyse en cours..."):
+        st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
+        input_shape = model.input_shape[1:3]
+        image_array = preprocess_image(uploaded_file, target_size=input_shape)
+        predicted_class, confidence = predict_image(model, image_array)
+        st.success(f"✅ **Résultat :** {predicted_class} ({confidence:.2f}%)")
 
     # Ajouter une section pour afficher des statistiques
     st.markdown("### Statistiques")
     st.write(f"Confiance de la prédiction : {confidence:.2f}%")
+else:
+    st.warning("⚠️ Veuillez télécharger une image valide.")
 
 # Footer avec crédits
 st.markdown(
