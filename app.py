@@ -27,33 +27,49 @@ def set_custom_style():
 
         /* Personnalisation de la barre latérale */
         [data-testid="stSidebar"] {{
-            background-color: #2e8b57; /* Vert assorti */
+            background: linear-gradient(135deg, #1e5631, #2e8b57); /* Dégradé vert assorti */
             color: white;
-            border-right: 2px solid #006400; /* Bordure élégante */
-            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+            border-right: 3px solid #006400; /* Bordure élégante */
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
         }}
 
         [data-testid="stSidebar"] .stButton > button {{
-            background-color: #4CAF50;
+            background-color: #2e8b57;
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             font-size: 16px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
+            font-weight: bold;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease-in-out;
         }}
 
         [data-testid="stSidebar"] .stButton > button:hover {{
-            background-color: #45a049;
-            transform: scale(1.05);
+            background-color: #3cb371;
+            transform: scale(1.08);
         }}
 
         [data-testid="stSidebar"] .stSelectbox {{
-            background-color: white;
-            color: black;
+            background-color: #1e5631;
+            color: white;
             border-radius: 5px;
-            padding: 5px;
+            padding: 8px;
+            border: 1px solid #006400;
+            font-weight: bold;
+        }}
+
+        [data-testid="stSidebar"] .stSelectbox:hover {{
+            background-color: #3cb371;
+        }}
+
+        [data-testid="stSidebar"] .stFileUploader {{
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
         }}
 
         </style>
