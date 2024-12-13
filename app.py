@@ -13,7 +13,7 @@ def set_custom_background_and_style():
         }
         h1, h2, h3, p {
             color: #FFFFFF; /* Texte blanc */
-            background-color: rgba(0, 0, 0, 0.5); /* Fond noir translucide */
+            background-color: #006400; /* Fond vert foncé */
             padding: 15px;
             border-radius: 8px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
