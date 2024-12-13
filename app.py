@@ -40,6 +40,10 @@ st.markdown(
 # Séparateur visuel
 st.divider()
 
+# Ajouter un bouton pour réinitialiser l'application
+if st.button("🔄 Réinitialiser"):
+    st.experimental_rerun()
+
 # Sélection du modèle
 model_choice = st.selectbox("Choisissez un modèle :", ["Model 1", "Model 2", "Model 3", "Model 4"])
 
@@ -63,3 +67,7 @@ if uploaded_file is not None:
     image_array = preprocess_image(uploaded_file, target_size=input_shape)
     predicted_class, confidence = predict_image(model, image_array)
     st.success(f"Résultat : {predicted_class} ({confidence:.2f}%)")
+
+    # Ajouter une section pour afficher des statistiques
+    st.markdown("### Statistiques")
+    st.write(f"Confiance de la prédiction : {confidence:.2f}%")
