@@ -18,6 +18,14 @@ def set_custom_background_and_style():
             border-radius: 8px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
         }
+        .stMarkdown, .stSelectbox, .stButton, .stFileUploader {
+            background-color: #006400; /* Fond vert foncé */
+            color: #FFFFFF;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
         .stButton > button {
             background-color: #4CAF50; /* Vert bouton */
             color: #FFFFFF;
@@ -31,12 +39,6 @@ def set_custom_background_and_style():
         .stButton > button:hover {
             background-color: #45a049; /* Vert bouton survol */
             transform: scale(1.05);
-        }
-        .stMarkdown {
-            border: 2px solid #3CB371; /* Bordure vert clair */
-            padding: 15px;
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.8);
         }
         </style>
         """,
