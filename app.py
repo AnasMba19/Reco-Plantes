@@ -4,30 +4,28 @@ from models.main import load_model, preprocess_image, predict_image, class_names
 try:
     from streamlit_lottie import st_lottie
     import requests
-    # Animation lottie thématique (feuilles qui poussent)
+    # Animation lottie
     lottie_url = "https://assets9.lottiefiles.com/packages/lf20_pkscqlmk.json"
     lottie_json = requests.get(lottie_url).json()
 except ImportError:
     lottie_json = None
 
-# Définition du style avec l'URL GitHub pour le fond
-def set_custom_style(): 
-    # Utilisation de l'URL GitHub pour l'image de fond
-    background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/refs/heads/main/assets/background.jpg"
+def set_custom_style():
+    # URL du background depuis GitHub (vérifiez bien l'URL raw)
+    background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/background.jpg"
     st.markdown(
         f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-        html, body {{
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        .stApp {{
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url("{background_url}") no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), 
+                        url("{background_url}") no-repeat center center fixed !important;
+            background-size: cover !important;
         }}
 
+        /* Rendre le fond transparent sur le container principal pour voir le background */
         [data-testid="stAppViewContainer"] > .main {{
             background: none !important;
             padding: 40px;
@@ -46,7 +44,6 @@ def set_custom_style():
             margin: 0 0 10px 0;
         }}
 
-        /* Style pour les boutons */
         .stButton > button {{
             background-color: #4CAF50; 
             color: #FFFFFF;
@@ -63,7 +60,6 @@ def set_custom_style():
             transform: scale(1.03);
         }}
 
-        /* Bannière avec logo */
         .banner {{
             display: flex;
             align-items: center;
@@ -76,15 +72,32 @@ def set_custom_style():
             border-radius: 8px;
         }}
 
+        footer {{
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #f0f0f0;
+        }}
+
+        footer a {{
+            color: #f0f0f0;
+            text-decoration: none;
+            font-weight: bold;
+        }}
+
+        footer a:hover {{
+            text-decoration: underline;
+        }}
+
         </style>
         """,
         unsafe_allow_html=True
     )
 
-# Appliquer le style
+# Appliquer le style en premier
 set_custom_style()
 
-# Titre principal
+# Titre principal avec logo
 st.markdown(
     """
     <div class="banner">
