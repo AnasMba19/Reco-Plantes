@@ -11,7 +11,8 @@ except ImportError:
     lottie_json = None
 
 def set_custom_style():
-    background_url = "https://images.unsplash.com/photo-1516651022221-3c83666ae09c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+    # Image de fond jardin
+    background_url = "https://images.unsplash.com/photo-1601233742689-3cad38a171a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     st.markdown(
         f"""
         <style>
@@ -21,19 +22,16 @@ def set_custom_style():
             height: 100%;
             margin: 0;
             padding: 0;
-            background: url("{background_url}") no-repeat center center fixed;
-            background-size: cover;
             font-family: 'Roboto', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url("{background_url}") no-repeat center center fixed;
+            background-size: cover;
         }}
 
-        /* Conteneur principal Streamlit */
         [data-testid="stAppViewContainer"] > .main {{
-            background-color: rgba(255, 255, 255, 0.6); 
-            backdrop-filter: blur(5px);
+            background: none !important;
             padding: 40px;
         }}
 
-        /* Contenu global */
         .content-block {{
             background-color: rgba(34, 139, 34, 0.85);
             color: #FFFFFF;
@@ -47,7 +45,6 @@ def set_custom_style():
             margin: 0 0 10px 0;
         }}
 
-        /* Onglets */
         .stTabs [data-baseweb="tab"] {{
             background: rgba(34, 139, 34, 0.7);
             border: none;
@@ -67,12 +64,10 @@ def set_custom_style():
             background: transparent;
         }}
 
-        /* Barre de progression de confiance */
         .stProgress > div > div > div {{
             background-color: #4CAF50;
         }}
 
-        /* Boutons */
         .stButton > button {{
             background-color: #4CAF50; 
             color: #FFFFFF;
@@ -89,9 +84,8 @@ def set_custom_style():
             transform: scale(1.03);
         }}
 
-        /* Sidebar */
         [data-testid="stSidebar"] {{
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(4px);
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }}
@@ -100,7 +94,6 @@ def set_custom_style():
             background-color: #45a049;
         }}
 
-        /* Carte résultat */
         .result-card {{
             background-color: rgba(34,139,34,0.9);
             padding: 20px;
@@ -113,16 +106,15 @@ def set_custom_style():
             line-height: 1.6;
         }}
 
-        /* Footer */
         footer {{
             text-align: center;
             margin-top: 40px;
             font-size: 14px;
-            color: #333;
+            color: #f0f0f0;
         }}
 
         footer a {{
-            color: #333;
+            color: #f0f0f0;
             text-decoration: none;
             font-weight: bold;
         }}
@@ -130,6 +122,20 @@ def set_custom_style():
         footer a:hover {{
             text-decoration: underline;
         }}
+
+        /* Bannière avec logo */
+        .banner {{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }}
+
+        .banner img {{
+            max-height: 80px;
+            border-radius: 8px;
+        }}
+
         </style>
         """,
         unsafe_allow_html=True
@@ -161,11 +167,19 @@ model_descriptions = {
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-# Titre principal
-st.markdown('<div class="content-block"><h1>🌿 Reconnaissance de Maladies des Plantes</h1></div>', unsafe_allow_html=True)
+# Bannière avec le logo et le titre (sans la feuille emoji)
+st.markdown(
+    """
+    <div class="banner">
+        <img src="https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/logo_recoplantes.png" alt="Logo RecoPlantes">
+        <h1>Reconnaissance de Maladies des Plantes</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# Onglets
-tab_instructions, tab_analyse = st.tabs(["📖 Instructions", "🔬 Analyse"])
+# Onglets: Instructions / Analyser / Contact
+tab_instructions, tab_analyse, tab_contact = st.tabs(["📖 Instructions", "🔬 Analyse", "📩 Contact"])
 
 with tab_instructions:
     st.markdown(
@@ -181,6 +195,9 @@ with tab_instructions:
         unsafe_allow_html=True
     )
     st.info(f"ℹ️ **Description du modèle choisi :** {model_descriptions[model_choice]}")
+
+    # Lien vers le manuel utilisateur
+    st.markdown("<p><a href='https://docs.google.com/document/d/xyz' target='_blank'>Manuel utilisateur</a></p>", unsafe_allow_html=True)
 
     if lottie_json:
         st_lottie(lottie_json, height=200)
@@ -199,17 +216,27 @@ with tab_analyse:
         st.markdown("**Confiance :**")
         st.progress(confidence / 100.0)  
         st.write(f"{confidence:.2f}%")
-
         st.markdown("<p><a href='https://www.google.com' target='_blank'>En savoir plus sur cette maladie</a></p>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.warning("⚠️ Veuillez télécharger une image valide dans la barre latérale.")
 
+with tab_contact:
+    st.markdown('<div class="content-block"><h2>Contactez-nous</h2><p>Veuillez laisser vos coordonnées et votre message.</p></div>', unsafe_allow_html=True)
+    with st.form("contact_form"):
+        name = st.text_input("Nom")
+        email = st.text_input("Email")
+        message = st.text_area("Message")
+        submitted = st.form_submit_button("Envoyer")
+        if submitted:
+            # Vous pouvez ici ajouter du code pour envoyer un email ou enregistrer en base de données
+            st.success("Merci pour votre message ! Nous vous répondrons dès que possible.")
+
 # Footer
 st.markdown(
     """
     <footer>
-        © 2024 Reconnaissance des Maladies des Plantes | Développé par Anas Mba19
+        © Reconnaissance des Maladies des Plantes 2024 | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
         <br>
         <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">GitHub</a> | 
         <a href="https://streamlit.io" target="_blank">Streamlit</a>
