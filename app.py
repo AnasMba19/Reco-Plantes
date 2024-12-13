@@ -23,9 +23,18 @@ def set_custom_background_and_style():
             padding: 10px 20px;
             border-radius: 5px;
             font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
         .stButton > button:hover {
             background-color: #45a049; /* Vert bouton survol */
+            transform: scale(1.05);
+        }
+        .stMarkdown {
+            border: 2px solid #3CB371; /* Bordure vert clair */
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
         }
         </style>
         """,
