@@ -9,12 +9,14 @@ def set_custom_background_and_style():
         .stApp {
             background: linear-gradient(135deg, #2ecc71, #f1c40f); /* Dégradé vert -> jaune */
             color: #FFFFFF; /* Texte blanc */
+            padding: 20px;
         }
         h1, h2, h3, p {
             color: #FFFFFF; /* Texte blanc */
             background-color: rgba(0, 0, 0, 0.5); /* Fond noir translucide */
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
         }
         .stButton > button {
             background-color: #4CAF50; /* Vert bouton */
