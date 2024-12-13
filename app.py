@@ -1,17 +1,20 @@
 import streamlit as st
 from models.main import load_model, preprocess_image, predict_image, class_names
 
-# Fonction pour définir un fond en couleur avec un style global
+# Fonction pour définir un fond en dégradé avec un style global
 def set_custom_background_and_style():
     st.markdown(
         """
         <style>
         .stApp {
-            background-color: #2E2E2E; /* Fond sombre */
+            background: linear-gradient(135deg, #2ecc71, #f1c40f); /* Dégradé vert -> jaune */
             color: #FFFFFF; /* Texte blanc */
         }
         h1, h2, h3, p {
-            color: #F1F1F1; /* Texte clair */
+            color: #FFFFFF; /* Texte blanc */
+            background-color: rgba(0, 0, 0, 0.5); /* Fond noir translucide */
+            padding: 10px;
+            border-radius: 5px;
         }
         .stButton > button {
             background-color: #4CAF50; /* Vert bouton */
