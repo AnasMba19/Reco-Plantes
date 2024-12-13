@@ -14,6 +14,12 @@ def add_bg_from_local(image_path):
             background-size: cover;
             background-position: center;
         }}
+        h1, h2, h3, p {{
+            background-color: rgba(255, 255, 255, 0.7); /* Blanc avec transparence */
+            padding: 10px;
+            border-radius: 5px;
+            color: #000000; /* Texte noir */
+        }}
         </style>
         """,
         unsafe_allow_html=True
