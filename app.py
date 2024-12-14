@@ -109,6 +109,29 @@ def set_custom_style():
             margin-bottom: 20px;
         }}
 
+        .result-block {{
+            background: rgba(245, 245, 245, 1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }}
+
+        .result-success {{
+            border-left: 5px solid #4CAF50;
+            padding-left: 10px;
+        }}
+
+        .result-warning {{
+            border-left: 5px solid #FFC107;
+            padding-left: 10px;
+        }}
+
+        .result-error {{
+            border-left: 5px solid #F44336;
+            padding-left: 10px;
+        }}
+
         footer {{
             background: #004d00;
             color: white;
@@ -126,23 +149,6 @@ def set_custom_style():
 
         footer a:hover {{
             text-decoration: underline;
-        }}
-
-        /* Animations */
-        .stButton > button:hover {{
-            animation: pulse 1s infinite;
-        }}
-
-        @keyframes pulse {{
-            0% {{
-                transform: scale(1);
-            }}
-            50% {{
-                transform: scale(1.1);
-            }}
-            100% {{
-                transform: scale(1);
-            }}
         }}
         </style>
         """,
@@ -212,9 +218,11 @@ if uploaded_file:
     input_shape = model.input_shape[1:3]
     image_array = preprocess_image(uploaded_file, target_size=input_shape)
     predicted_class, confidence = predict_image(model, image_array)
+
+    result_style = "result-success" if confidence >= 80 else "result-warning" if confidence >= 50 else "result-error"
     st.markdown(
         f"""
-        <div class="content-block">
+        <div class="result-block {result_style}">
             <h2 class="subtitle">Résultat de l'Analyse</h2>
             <p>✅ Classe prédite : <strong>{predicted_class}</strong></p>
             <p>📊 Confiance : <strong>{confidence:.2f}%</strong></p>
