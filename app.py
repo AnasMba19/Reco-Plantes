@@ -1,19 +1,5 @@
 import streamlit as st
 from models.main import load_model, preprocess_image, predict_image, class_names
-import json
-
-try:
-    from streamlit_lottie import st_lottie
-except ImportError:
-    st.warning("Le module streamlit_lottie n'est pas installé.")
-
-# Charger l'animation Lottie depuis le fichier local
-try:
-    with open("assets/lottie/animation.json", "r") as f:
-        lottie_json = json.load(f)
-except FileNotFoundError:
-    lottie_json = None
-    st.error("⚠️ Le fichier animation.json est introuvable dans le dossier 'assets/lottie'.")
 
 def set_custom_style():
     # URL du background depuis GitHub
@@ -279,21 +265,15 @@ else:
         unsafe_allow_html=True
     )
 
-# Animation Lottie
-if lottie_json:
-    st.markdown(
-        """
-        <div style="text-align: center; margin-top: 20px; background: rgba(46,139,87,0.1); border-radius: 8px;">
-        """,
-        unsafe_allow_html=True
-    )
-    st_lottie(lottie_json, height=200)
-    st.markdown(
-        """
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+# Animation GIF
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 20px;">
+        <img src="assets/animations/animation.gif" alt="Plant Animation" style="width: 200px; border-radius: 8px;">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # Footer
 st.markdown(
