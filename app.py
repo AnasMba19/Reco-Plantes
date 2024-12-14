@@ -127,6 +127,23 @@ def set_custom_style():
         footer a:hover {{
             text-decoration: underline;
         }}
+
+        /* Animations */
+        .stButton > button:hover {{
+            animation: pulse 1s infinite;
+        }}
+
+        @keyframes pulse {{
+            0% {{
+                transform: scale(1);
+            }}
+            50% {{
+                transform: scale(1.1);
+            }}
+            100% {{
+                transform: scale(1);
+            }}
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -210,7 +227,19 @@ else:
 
 # Animation Lottie
 if lottie_json:
+    st.markdown(
+        """
+        <div style="text-align: center; margin-top: 20px;">
+        """,
+        unsafe_allow_html=True
+    )
     st_lottie(lottie_json, height=200)
+    st.markdown(
+        """
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Footer
 st.markdown(
