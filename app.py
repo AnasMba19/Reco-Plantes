@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from models.main import load_model, preprocess_image, predict_image, class_names
 
@@ -31,162 +32,6 @@ def set_custom_style():
             font-size: 18px;
         }}
 
-        [data-testid="stSidebar"] .stFileUploader {{
-            padding: 10px;
-            background: rgba(46,139,87, 0.3);
-            border: 2px solid #2e8b57;
-            border-radius: 8px;
-            color: white;
-            transition: box-shadow 0.3s ease, background 0.3s ease;
-        }}
-
-        [data-testid="stSidebar"] .stFileUploader:hover {{
-            background: rgba(46,139,87, 0.5);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }}
-
-        [data-testid="stSidebar"] .stSelectbox {{
-            background: rgba(46,139,87, 0.3);
-            border: 2px solid #2e8b57;
-            border-radius: 8px;
-            color: white;
-            transition: box-shadow 0.3s ease, background 0.3s ease;
-        }}
-
-        [data-testid="stSidebar"] .stSelectbox:hover {{
-            background: rgba(46,139,87, 0.5);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }}
-
-        [data-testid="stSidebar"] .stAlert {{
-            background: rgba(46,139,87, 0.3);
-            border-radius: 8px;
-            color: white;
-            margin-bottom: 15px;
-        }}
-
-        [data-testid="stSidebar"] .stText {{
-            color: white;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }}
-
-        /* Title and Header */
-        h1.title {{
-            color: #2e8b57;
-            font-size: 48px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }}
-
-        h2.subtitle {{
-            color: #006400;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }}
-
-        p, li {{
-            font-size: 16px;
-            line-height: 1.6;
-            color: white;
-        }}
-
-        .content-block {{
-            background: rgba(255, 255, 255, 0.85);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-        }}
-
-        .result-block {{
-            background: rgba(245, 245, 245, 1);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-        }}
-
-        .result-success {{
-            border-left: 5px solid #4CAF50;
-            padding-left: 10px;
-        }}
-
-        .result-warning {{
-            border-left: 5px solid #FFC107;
-            padding-left: 10px;
-        }}
-
-        .result-error {{
-            border-left: 5px solid #F44336;
-            padding-left: 10px;
-        }}
-
-        .stWarning {{
-            font-weight: bold;
-            color: #FFD700;
-            background: rgba(255, 165, 0, 0.1);
-            border: 2px solid #FFD700;
-            border-radius: 8px;
-            padding: 10px;
-            animation: pulse 1.5s infinite;
-        }}
-
-        @keyframes pulse {{
-            0% {{ box-shadow: 0 0 5px rgba(255, 165, 0, 0.5); }}
-            50% {{ box-shadow: 0 0 20px rgba(255, 165, 0, 1); }}
-            100% {{ box-shadow: 0 0 5px rgba(255, 165, 0, 0.5); }}
-        }}
-
-        footer {{
-            background: #004d00;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 14px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            margin-top: 15px;
-        }}
-
-        footer a {{
-            color: #80FF80;
-            text-decoration: none;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }}
-
-        footer a:hover {{
-            text-decoration: underline;
-            transform: scale(1.1);
-        }}
-
-        ul li::marker {{
-            color: #2e8b57;
-            font-size: 20px;
-        }}
-
-        ul li::before {{
-            content: "\2022";
-            color: #2e8b57;
-            margin-right: 5px;
-        }}
-
-        ul li span.icon-number {{
-            display: inline-block;
-            background: #2e8b57;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            text-align: center;
-            line-height: 24px;
-            font-weight: bold;
-        }}
-
-        /* Image animation style */
         .animated-image {{
             animation: scaleAnimation 2s infinite alternate;
             display: block;
@@ -197,7 +42,6 @@ def set_custom_style():
             from {{ transform: scale(1); }}
             to {{ transform: scale(1.1); }}
         }}
-
         </style>
         """,
         unsafe_allow_html=True
@@ -278,15 +122,22 @@ else:
         unsafe_allow_html=True
     )
 
-# Animation avec image et CSS
-st.markdown(
-    """
-    <div style="text-align: center; margin-top: 20px;">
-        <img src="assets/images/imagecss.png" alt="Plant Animation" class="animated-image" style="width: 200px;">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# Chemin de l'image
+image_path = "assets/images/imagecss.png"
+
+# Vérifier si l'image existe
+if not os.path.exists(image_path):
+    st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
+else:
+    # Ajouter l'image animée
+    st.markdown(
+        f"""
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="{image_path}" alt="Plant Animation" class="animated-image" style="width: 200px;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Footer
 st.markdown(
