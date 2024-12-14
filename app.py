@@ -147,13 +147,16 @@ models = {
     "ResNet50": "models/resnet50_model.keras",
     "MobileNetV2": "models/mobilenetv2_model.keras",
 }
-model_path = models[model_choice]
+
+# Normalize the model choice to match the dictionary keys
+normalized_model_choice = model_choice.split()[0]  # Extract "ResNet50" or "MobileNetV2"
+model_path = models[normalized_model_choice]
 
 model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
 }
-st.sidebar.info(f"ℹ️ **Modèle choisi :** {model_descriptions[model_choice]}")
+st.sidebar.info(f"ℹ️ **Modèle choisi :** {model_descriptions[normalized_model_choice]}")
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
