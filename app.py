@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import base64
 from models.main import load_model, preprocess_image, predict_image, class_names
 
 def set_custom_style():
@@ -16,6 +17,7 @@ def set_custom_style():
             background: linear-gradient(120deg, rgba(46,139,87, 0.9), rgba(255,255,255, 0.9)), 
                         url("{background_url}") no-repeat center center fixed;
             background-size: cover;
+            forced-color-adjust: none; /* Ajout de la propriété recommandée */
         }}
 
         /* Sidebar style */
@@ -26,7 +28,7 @@ def set_custom_style():
             padding: 20px;
         }}
 
-        [data-testid="stSidebar"] h1, h2, h3, label {{
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
             color: white;
             font-weight: bold;
             font-size: 18px;
@@ -42,10 +44,51 @@ def set_custom_style():
             from {{ transform: scale(1); }}
             to {{ transform: scale(1.1); }}
         }}
+
+        /* Styles pour les résultats */
+        .result-success {{
+            background-color: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }}
+        .result-warning {{
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }}
+        .result-error {{
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }}
+
+        /* Styles pour le footer */
+        footer {{
+            text-align: center;
+            margin-top: 50px;
+            font-size: 14px;
+            color: #555;
+        }}
+        footer a {{
+            text-decoration: none;
+            color: #555;
+        }}
         </style>
         """,
         unsafe_allow_html=True
     )
+
+def get_image_base64(image_path):
+    try:
+        with open(image_path, "rb") as image_file:
+            encoded = base64.b64encode(image_file.read()).decode()
+        return f"data:image/png;base64,{encoded}"
+    except Exception as e:
+        st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
+        return None
 
 # Appliquer le style personnalisé
 set_custom_style()
@@ -129,15 +172,18 @@ image_path = "assets/images/imagecss.png"
 if not os.path.exists(image_path):
     st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
 else:
-    # Ajouter l'image animée
-    st.markdown(
-        f"""
-        <div style="text-align: center; margin-top: 20px;">
-            <img src="{image_path}" alt="Plant Animation" class="animated-image" style="width: 200px;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Encoder l'image en base64
+    image_base64 = get_image_base64(image_path)
+    if image_base64:
+        # Ajouter l'image animée
+        st.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="{image_base64}" alt="Plant Animation" class="animated-image" style="width: 200px;">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # Footer
 st.markdown(
