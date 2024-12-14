@@ -1,15 +1,19 @@
 import streamlit as st
 from models.main import load_model, preprocess_image, predict_image, class_names
+import json
 
 try:
     from streamlit_lottie import st_lottie
-    import requests
-    # Animation lottie
-    lottie_url = "https://assets9.lottiefiles.com/packages/lf20_pkscqlmk.json"
-    lottie_json = requests.get(lottie_url).json()
 except ImportError:
-    lottie_json = None
+    st.warning("Le module streamlit_lottie n'est pas installé.")
 
+# Charger l'animation Lottie depuis le fichier local
+try:
+    with open("assets/lottie/animation.json", "r") as f:
+        lottie_json = json.load(f)
+except FileNotFoundError:
+    lottie_json = None
+    st.error("⚠️ Le fichier animation.json est introuvable dans le dossier 'assets/lottie'.")
 
 def set_custom_style():
     # URL du background depuis GitHub
