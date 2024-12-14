@@ -9,7 +9,7 @@ def set_custom_style():
     st.markdown(
         f"""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap');
 
         /* Global style for the app */
         .stApp {{
@@ -17,7 +17,7 @@ def set_custom_style():
             background: linear-gradient(120deg, rgba(46,139,87, 0.9), rgba(255,255,255, 0.9)), 
                         url("{background_url}") no-repeat center center fixed;
             background-size: cover;
-            forced-color-adjust: none; /* Ajout de la propriété recommandée */
+            forced-color-adjust: none;
         }}
 
         /* Sidebar style */
@@ -34,6 +34,13 @@ def set_custom_style():
             font-size: 18px;
         }}
 
+        /* Hover effects for buttons */
+        button:hover {{
+            transform: scale(1.05);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }}
+
+        /* Animated image */
         .animated-image {{
             animation: scaleAnimation 2s infinite alternate;
             display: block;
@@ -45,27 +52,30 @@ def set_custom_style():
             to {{ transform: scale(1.1); }}
         }}
 
-        /* Styles pour les résultats */
+        /* Result styles */
         .result-success {{
             background-color: #d4edda;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }}
         .result-warning {{
             background-color: #fff3cd;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }}
         .result-error {{
             background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }}
 
-        /* Styles pour le footer */
+        /* Footer styles */
         footer {{
             text-align: center;
             margin-top: 50px;
@@ -75,6 +85,13 @@ def set_custom_style():
         footer a {{
             text-decoration: none;
             color: #555;
+        }}
+
+        /* Responsive design */
+        @media (max-width: 768px) {{
+            .stApp {{
+                font-size: 14px;
+            }}
         }}
         </style>
         """,
@@ -90,10 +107,10 @@ def get_image_base64(image_path):
         st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
         return None
 
-# Appliquer le style personnalisé
+# Apply custom styles
 set_custom_style()
 
-# Barre latérale
+# Sidebar
 st.sidebar.title("Reco-Plantes")
 
 model_choice = st.sidebar.selectbox(
@@ -101,7 +118,7 @@ model_choice = st.sidebar.selectbox(
     ["ResNet50", "MobileNetV2"]
 )
 
-# Modèles disponibles
+# Models
 models = {
     "ResNet50": "models/resnet50_model.keras",
     "MobileNetV2": "models/mobilenetv2_model.keras",
@@ -116,7 +133,7 @@ st.sidebar.info(f"ℹ️ **Modèle choisi :** {model_descriptions[model_choice]}
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-# Titre principal
+# Main title
 st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
 
 # Instructions
@@ -136,7 +153,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Analyse et résultats
+# Analysis and results
 if uploaded_file:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
     model = load_model(model_path)
@@ -165,17 +182,14 @@ else:
         unsafe_allow_html=True
     )
 
-# Chemin de l'image
+# Animated image
 image_path = "assets/images/imagecss.png"
 
-# Vérifier si l'image existe
 if not os.path.exists(image_path):
     st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
 else:
-    # Encoder l'image en base64
     image_base64 = get_image_base64(image_path)
     if image_base64:
-        # Ajouter l'image animée
         st.markdown(
             f"""
             <div style="text-align: center; margin-top: 20px;">
