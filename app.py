@@ -31,37 +31,6 @@ def set_custom_style():
             background-size: cover;
         }}
 
-        /* Sidebar style */
-        [data-testid="stSidebar"] {{
-            background: linear-gradient(180deg, #006400, #2e8b57);
-            color: white;
-            border-right: 3px solid #004d00;
-            padding: 20px;
-        }}
-
-        [data-testid="stSidebar"] h1, h2, h3 {{
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-        }}
-
-        [data-testid="stSidebar"] .stButton > button {{
-            background: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }}
-
-        [data-testid="stSidebar"] .stButton > button:hover {{
-            background: #45a049;
-            transform: scale(1.05);
-        }}
-
         /* Title and Header */
         h1.title {{
             color: #2e8b57;
@@ -77,6 +46,12 @@ def set_custom_style():
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 15px;
+        }}
+
+        p, li {{
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
         }}
 
         .content-block {{
