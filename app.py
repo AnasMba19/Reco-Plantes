@@ -47,30 +47,33 @@ def set_custom_style():
         [data-testid="stSidebar"] .stFileUploader {{
             padding: 10px;
             background: rgba(46,139,87, 0.3);
-            border: 1px solid #004d00;
+            border: none;
             border-radius: 8px;
             color: white;
         }}
 
         [data-testid="stSidebar"] .stFileUploader:hover {{
             background: rgba(46,139,87, 0.5);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }}
 
         [data-testid="stSidebar"] .stSelectbox {{
             background: rgba(46,139,87, 0.3);
-            border: 1px solid #004d00;
+            border: none;
             border-radius: 8px;
             color: white;
         }}
 
         [data-testid="stSidebar"] .stSelectbox:hover {{
             background: rgba(46,139,87, 0.5);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }}
 
         [data-testid="stSidebar"] .stAlert {{
             background: rgba(46,139,87, 0.3);
             border-radius: 8px;
             color: white;
+            margin-bottom: 15px;
         }}
 
         [data-testid="stSidebar"] .stText {{
