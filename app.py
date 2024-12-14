@@ -185,6 +185,19 @@ def set_custom_style():
             line-height: 24px;
             font-weight: bold;
         }}
+
+        /* Image animation style */
+        .animated-image {{
+            animation: scaleAnimation 2s infinite alternate;
+            display: block;
+            margin: 0 auto;
+        }}
+
+        @keyframes scaleAnimation {{
+            from {{ transform: scale(1); }}
+            to {{ transform: scale(1.1); }}
+        }}
+
         </style>
         """,
         unsafe_allow_html=True
@@ -265,11 +278,11 @@ else:
         unsafe_allow_html=True
     )
 
-# Animation GIF
+# Animation avec image et CSS
 st.markdown(
     """
     <div style="text-align: center; margin-top: 20px;">
-        <img src="assets/animations/animation.gif" alt="Plant Animation" style="width: 200px; border-radius: 8px;">
+        <img src="assets/images/imagecss.png" alt="Plant Animation" class="animated-image" style="width: 200px;">
     </div>
     """,
     unsafe_allow_html=True
