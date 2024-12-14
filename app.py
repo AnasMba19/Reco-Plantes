@@ -73,6 +73,12 @@ def set_custom_style():
             color: white;
         }}
 
+        [data-testid="stSidebar"] .stText {{
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }}
+
         /* Title and Header */
         h1.title {{
             color: #2e8b57;
@@ -93,7 +99,7 @@ def set_custom_style():
         p, li {{
             font-size: 16px;
             line-height: 1.6;
-            color: #333;
+            color: white;
         }}
 
         .content-block {{
@@ -156,6 +162,18 @@ def set_custom_style():
             color: #2e8b57;
             margin-right: 5px;
         }}
+
+        ul li span.icon-number {{
+            display: inline-block;
+            background: #2e8b57;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -198,9 +216,9 @@ st.markdown(
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
         <ul>
-            <li><span style='color:#2e8b57;'>1️⃣</span> Téléchargez une image via la barre latérale.</li>
-            <li><span style='color:#2e8b57;'>2️⃣</span> Sélectionnez un modèle dans le menu latéral.</li>
-            <li><span style='color:#2e8b57;'>3️⃣</span> Le résultat s'affichera automatiquement après analyse.</li>
+            <li><span class='icon-number'>1</span> Téléchargez une image via la barre latérale.</li>
+            <li><span class='icon-number'>2</span> Sélectionnez un modèle dans le menu latéral.</li>
+            <li><span class='icon-number'>3</span> Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
