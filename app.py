@@ -47,26 +47,28 @@ def set_custom_style():
         [data-testid="stSidebar"] .stFileUploader {{
             padding: 10px;
             background: rgba(46,139,87, 0.3);
-            border: none;
+            border: 2px solid #2e8b57;
             border-radius: 8px;
             color: white;
+            transition: box-shadow 0.3s ease, background 0.3s ease;
         }}
 
         [data-testid="stSidebar"] .stFileUploader:hover {{
             background: rgba(46,139,87, 0.5);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }}
 
         [data-testid="stSidebar"] .stSelectbox {{
             background: rgba(46,139,87, 0.3);
-            border: none;
+            border: 2px solid #2e8b57;
             border-radius: 8px;
             color: white;
+            transition: box-shadow 0.3s ease, background 0.3s ease;
         }}
 
         [data-testid="stSidebar"] .stSelectbox:hover {{
             background: rgba(46,139,87, 0.5);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }}
 
         [data-testid="stSidebar"] .stAlert {{
@@ -136,6 +138,15 @@ def set_custom_style():
             padding-left: 10px;
         }}
 
+        .stWarning {{
+            font-weight: bold;
+            color: #FFD700;
+            background: rgba(255, 165, 0, 0.1);
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            padding: 10px;
+        }}
+
         footer {{
             background: #004d00;
             color: white;
@@ -149,10 +160,12 @@ def set_custom_style():
         footer a {{
             color: #80FF80;
             text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
         }}
 
         footer a:hover {{
             text-decoration: underline;
+            transform: scale(1.1);
         }}
 
         ul li::marker {{
@@ -248,7 +261,14 @@ if uploaded_file:
         unsafe_allow_html=True
     )
 else:
-    st.warning("⚠️ Veuillez télécharger une image valide.")
+    st.markdown(
+        """
+        <div class="stWarning">
+            ⚠️ Veuillez télécharger une image valide.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Animation Lottie
 if lottie_json:
