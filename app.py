@@ -39,42 +39,25 @@ def set_custom_style():
             padding: 20px;
         }}
 
-        [data-testid="stSidebar"] h1, h2, h3 {{
+        [data-testid="stSidebar"] h1, h2, h3, label {{
             color: white;
             font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 15px;
         }}
 
         [data-testid="stSidebar"] .stButton > button {{
-            background: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 16px;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }}
-
-        [data-testid="stSidebar"] .stButton > button:hover {{
-            background: #45a049;
-            transform: scale(1.05);
+            display: none;
         }}
 
         [data-testid="stSidebar"] .stFileUploader {{
             padding: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(46,139,87, 0.3);
             border-radius: 8px;
             color: white;
         }}
 
-        [data-testid="stSidebar"] .stFileUploader:hover {{
-            background: rgba(255, 255, 255, 0.3);
-        }}
-
-        [data-testid="stSidebar"] label {{
-            font-weight: bold;
+        [data-testid="stSidebar"] .stSelectbox {{
+            background: rgba(46,139,87, 0.3);
+            border-radius: 8px;
             color: white;
         }}
 
@@ -150,6 +133,11 @@ def set_custom_style():
         footer a:hover {{
             text-decoration: underline;
         }}
+
+        ul li::marker {{
+            color: #2e8b57;
+            font-weight: bold;
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -160,16 +148,6 @@ set_custom_style()
 
 # Barre latérale
 st.sidebar.title("Reco-Plantes")
-st.sidebar.markdown(
-    """
-    <div style="text-align: center; margin-bottom: 15px;">
-        <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); cursor: pointer;">
-            🔄 Réinitialiser
-        </button>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 model_choice = st.sidebar.selectbox(
     "Choisissez un modèle :",
@@ -202,9 +180,9 @@ st.markdown(
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
         <ul>
-            <li>1️⃣ Téléchargez une image via la barre latérale.</li>
-            <li>2️⃣ Sélectionnez un modèle dans le menu latéral.</li>
-            <li>3️⃣ Le résultat s'affichera automatiquement après analyse.</li>
+            <li>1. Téléchargez une image via la barre latérale.</li>
+            <li>2. Sélectionnez un modèle dans le menu latéral.</li>
+            <li>3. Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
@@ -237,7 +215,7 @@ else:
 if lottie_json:
     st.markdown(
         """
-        <div style="text-align: center; margin-top: 20px;">
+        <div style="text-align: center; margin-top: 20px; background: rgba(46,139,87,0.1); border-radius: 8px;">
         """,
         unsafe_allow_html=True
     )
