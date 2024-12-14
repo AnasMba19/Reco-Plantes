@@ -75,6 +75,15 @@ def set_custom_style():
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }}
 
+        /* Backdrop filter for content block */
+        .content-block {{
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+
         /* Footer styles */
         footer {{
             text-align: center;
@@ -86,6 +95,10 @@ def set_custom_style():
             text-decoration: none;
             color: #555;
         }}
+        footer a:hover {{
+            color: #2e8b57;
+            text-decoration: underline;
+        }}
 
         /* Responsive design */
         @media (max-width: 768px) {{
@@ -93,6 +106,17 @@ def set_custom_style():
                 font-size: 14px;
             }}
         }}
+
+        /* Animation for the title */
+        .title {{
+            animation: fadeIn 2s ease-in-out;
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
+        }}
+
         </style>
         """,
         unsafe_allow_html=True
@@ -115,7 +139,7 @@ st.sidebar.title("Reco-Plantes")
 
 model_choice = st.sidebar.selectbox(
     "Choisissez un modèle :",
-    ["ResNet50", "MobileNetV2"]
+    ["ResNet50 🖼️", "MobileNetV2 ⚡"]
 )
 
 # Models
@@ -156,10 +180,11 @@ st.markdown(
 # Analysis and results
 if uploaded_file:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-    model = load_model(model_path)
-    input_shape = model.input_shape[1:3]
-    image_array = preprocess_image(uploaded_file, target_size=input_shape)
-    predicted_class, confidence = predict_image(model, image_array)
+    with st.spinner("Analyse en cours... Veuillez patienter"):
+        model = load_model(model_path)
+        input_shape = model.input_shape[1:3]
+        image_array = preprocess_image(uploaded_file, target_size=input_shape)
+        predicted_class, confidence = predict_image(model, image_array)
 
     result_style = "result-success" if confidence >= 80 else "result-warning" if confidence >= 50 else "result-error"
     st.markdown(
