@@ -255,8 +255,12 @@ st.markdown(
     <footer>
         © 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
         <br>
-        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">GitHub</a> | 
-        <a href="https://streamlit.io" target="_blank">Streamlit</a>
+        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width:20px; vertical-align:middle; margin-right:5px;">GitHub
+        </a> |
+        <a href="https://streamlit.io" target="_blank">
+            <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit" style="width:20px; vertical-align:middle; margin-right:5px;">Streamlit
+        </a>
     </footer>
     """,
     unsafe_allow_html=True
