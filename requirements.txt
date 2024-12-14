@@ -1,4 +1,5 @@
 streamlit==1.23.0
+streamlit-lottie
 tensorflow
 pillow
 numpy
@@ -13,3 +14,4 @@ six
 threadpoolctl
 setuptools
 wheel
+requests
