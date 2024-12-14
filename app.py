@@ -31,6 +31,53 @@ def set_custom_style():
             background-size: cover;
         }}
 
+        /* Sidebar style */
+        [data-testid="stSidebar"] {{
+            background: linear-gradient(180deg, #006400, #2e8b57);
+            color: white;
+            border-right: 3px solid #004d00;
+            padding: 20px;
+        }}
+
+        [data-testid="stSidebar"] h1, h2, h3 {{
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }}
+
+        [data-testid="stSidebar"] .stButton > button {{
+            background: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }}
+
+        [data-testid="stSidebar"] .stButton > button:hover {{
+            background: #45a049;
+            transform: scale(1.05);
+        }}
+
+        [data-testid="stSidebar"] .stFileUploader {{
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+        }}
+
+        [data-testid="stSidebar"] .stFileUploader:hover {{
+            background: rgba(255, 255, 255, 0.3);
+        }}
+
+        [data-testid="stSidebar"] label {{
+            font-weight: bold;
+            color: white;
+        }}
+
         /* Title and Header */
         h1.title {{
             color: #2e8b57;
@@ -90,8 +137,16 @@ set_custom_style()
 
 # Barre latérale
 st.sidebar.title("Reco-Plantes")
-if st.sidebar.button("🔄 Réinitialiser"):
-    st.experimental_rerun()
+st.sidebar.markdown(
+    """
+    <div style="text-align: center; margin-bottom: 15px;">
+        <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); cursor: pointer;">
+            🔄 Réinitialiser
+        </button>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 model_choice = st.sidebar.selectbox(
     "Choisissez un modèle :",
