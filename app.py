@@ -44,18 +44,30 @@ def set_custom_style():
             font-weight: bold;
         }}
 
-        [data-testid="stSidebar"] .stButton > button {{
-            display: none;
-        }}
-
         [data-testid="stSidebar"] .stFileUploader {{
             padding: 10px;
             background: rgba(46,139,87, 0.3);
+            border: 1px solid #004d00;
             border-radius: 8px;
             color: white;
         }}
 
+        [data-testid="stSidebar"] .stFileUploader:hover {{
+            background: rgba(46,139,87, 0.5);
+        }}
+
         [data-testid="stSidebar"] .stSelectbox {{
+            background: rgba(46,139,87, 0.3);
+            border: 1px solid #004d00;
+            border-radius: 8px;
+            color: white;
+        }}
+
+        [data-testid="stSidebar"] .stSelectbox:hover {{
+            background: rgba(46,139,87, 0.5);
+        }}
+
+        [data-testid="stSidebar"] .stAlert {{
             background: rgba(46,139,87, 0.3);
             border-radius: 8px;
             color: white;
@@ -136,7 +148,13 @@ def set_custom_style():
 
         ul li::marker {{
             color: #2e8b57;
-            font-weight: bold;
+            font-size: 20px;
+        }}
+
+        ul li::before {{
+            content: "\2022";
+            color: #2e8b57;
+            margin-right: 5px;
         }}
         </style>
         """,
@@ -180,9 +198,9 @@ st.markdown(
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
         <ul>
-            <li>1. Téléchargez une image via la barre latérale.</li>
-            <li>2. Sélectionnez un modèle dans le menu latéral.</li>
-            <li>3. Le résultat s'affichera automatiquement après analyse.</li>
+            <li><span style='color:#2e8b57;'>1️⃣</span> Téléchargez une image via la barre latérale.</li>
+            <li><span style='color:#2e8b57;'>2️⃣</span> Sélectionnez un modèle dans le menu latéral.</li>
+            <li><span style='color:#2e8b57;'>3️⃣</span> Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
