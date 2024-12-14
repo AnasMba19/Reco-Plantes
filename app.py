@@ -10,6 +10,7 @@ try:
 except ImportError:
     lottie_json = None
 
+
 def set_custom_style():
     # URL du background depuis GitHub (vérifiez bien l'URL raw)
     background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/background.jpg"
@@ -34,53 +35,39 @@ def set_custom_style():
             padding: 20px;
         }}
 
-        [data-testid="stSidebar"] .stButton > button {{
-            background-color: #3cb371;
+        /* Uniformisation des éléments */
+        [data-testid="stSidebar"] .stButton > button,
+        [data-testid="stSidebar"] .stSelectbox,
+        [data-testid="stSidebar"] .stFileUploader {{
+            background-color: #3CB371;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: all 0.2s;
+            border-radius: 5px;
             padding: 12px;
-        }}
-
-        [data-testid="stSidebar"] .stButton > button:hover {{
-            background-color: #4CAF50;
-            transform: scale(1.05);
-        }}
-
-        [data-testid="stSidebar"] .stSelectbox {{
-            background-color: #1e5631;
-            color: white;
-            border-radius: 5px;
-            padding: 8px;
-            border: 1px solid #006400;
-            font-weight: bold;
-        }}
-
-        [data-testid="stSidebar"] .stSelectbox:hover {{
-            background-color: #3cb371;
-        }}
-
-        [data-testid="stSidebar"] .stFileUploader {{
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 5px;
-            padding: 10px;
             font-size: 14px;
             font-weight: bold;
         }}
 
-        /* Ajout d'espacements et alignements */
-        [data-testid="stSidebar"] .stFileUploader, [data-testid="stSidebar"] .stSelectbox {{
+        /* Légère variation au survol */
+        [data-testid="stSidebar"] .stButton > button:hover,
+        [data-testid="stSidebar"] .stSelectbox:hover,
+        [data-testid="stSidebar"] .stFileUploader:hover {{
+            background-color: #45a049;
+            transform: scale(1.03);
+        }}
+
+        /* Ajout d'espacements entre les éléments */
+        [data-testid="stSidebar"] .stButton,
+        [data-testid="stSidebar"] .stSelectbox,
+        [data-testid="stSidebar"] .stFileUploader {{
             margin-top: 10px;
             margin-bottom: 20px;
         }}
-
         </style>
         """,
         unsafe_allow_html=True
     )
+
 
 # Appliquer le style en premier
 set_custom_style()
@@ -91,7 +78,7 @@ if st.sidebar.button("🔄 Réinitialiser"):
     st.experimental_rerun()
 
 model_choice = st.sidebar.selectbox(
-    "Choisissez un modèle :", 
+    "Choisissez un modèle :",
     ["ResNet50", "MobileNetV2"]
 )
 
