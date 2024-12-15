@@ -222,3 +222,44 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+# Warning message
+st.markdown(
+    """
+    <div class="stWarning">
+        ⚠️ Veuillez télécharger une image valide.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Image animation
+image_path = "assets/images/imagecss.png"
+if os.path.exists(image_path):
+    image_base64 = get_image_base64(image_path)
+    if image_base64:
+        st.markdown(
+            f"""
+            <div>
+                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# Footer
+st.markdown(
+    """
+    <footer>
+        &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
+        <br>
+        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
+            GitHub
+        </a> |
+        <a href="https://streamlit.io" target="_blank">
+            Streamlit
+        </a>
+    </footer>
+    """,
+    unsafe_allow_html=True
+)
