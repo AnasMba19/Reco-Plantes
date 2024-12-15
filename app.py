@@ -155,9 +155,9 @@ st.markdown(
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
         <ul class="custom-list">
-            <li>1. Téléchargez une image via la barre latérale.</li>
-            <li>2. Sélectionnez un modèle dans le menu latéral.</li>
-            <li>3. Le résultat s'affichera automatiquement après analyse.</li>
+            <li><span style="color: #ffffff; background: #006400; border-radius: 50%; padding: 5px 10px;">1</span> Téléchargez une image via la barre latérale.</li>
+            <li><span style="color: #ffffff; background: #006400; border-radius: 50%; padding: 5px 10px;">2</span> Sélectionnez un modèle dans le menu latéral.</li>
+            <li><span style="color: #ffffff; background: #006400; border-radius: 50%; padding: 5px 10px;">3</span> Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
