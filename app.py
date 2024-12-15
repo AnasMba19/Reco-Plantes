@@ -112,13 +112,16 @@ def set_custom_style():
             margin-top: 50px;
             font-size: 14px;
             color: #555;
+            background-color: #8B4513; /* Brown color like root */
+            padding: 10px;
+            border-radius: 10px;
         }}
         footer a {{
             text-decoration: none;
-            color: #555;
+            color: #fff; /* White text */
         }}
         footer a:hover {{
-            color: #2e8b57;
+            color: #FFD700; /* Golden yellow for hover effect */
             text-decoration: underline;
         }}
 
