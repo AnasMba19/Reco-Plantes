@@ -121,6 +121,7 @@ def set_custom_style():
         /* Animation for the title */
         .title {{
             animation: fadeIn 2s ease-in-out;
+            color: #004d00; /* Dark green color */
         }}
 
         @keyframes fadeIn {{
