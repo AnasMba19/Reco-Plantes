@@ -66,10 +66,17 @@ def set_custom_style():
             }}
         }}
 
-        /* Enlever les puces de la liste */
-        ul {{
-            list-style-type: none; /* Enlève les points */
-            padding-left: 0; /* Ajuste le retrait à gauche */
+        /* Custom list icons */
+        .custom-list li {{
+            list-style: none;
+            margin: 10px 0;
+        }}
+        .custom-list li::before {{
+            content: '\2713'; /* Checkmark icon */
+            color: #2e8b57; /* Dark green */
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 10px;
         }}
 
         /* Result styles */
@@ -132,133 +139,38 @@ def set_custom_style():
             color: #FFD700; /* Golden yellow for hover effect */
             text-decoration: underline;
         }}
-
-        /* Responsive design */
-        @media (max-width: 768px) {{
-            .stApp {{
-                font-size: 14px;
-            }}
-        }}
-
-        /* Animation for the title */
-        .title {{
-            animation: fadeIn 2s ease-in-out;
-            color: #004d00; /* Dark green color */
-        }}
-
-        @keyframes fadeIn {{
-            from {{ opacity: 0; }}
-            to {{ opacity: 1; }}
-        }}
-
         </style>
         """,
         unsafe_allow_html=True
     )
 
-def get_image_base64(image_path):
-    try:
-        with open(image_path, "rb") as image_file:
-            encoded = base64.b64encode(image_file.read()).decode()
-        return f"data:image/png;base64,{encoded}"
-    except Exception as e:
-        st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
-        return None
-
 # Apply custom styles
 set_custom_style()
 
-# Sidebar
-st.sidebar.title("Reco-Plantes")
-
-model_choice = st.sidebar.selectbox(
-    "Choisissez un modèle :",
-    ["ResNet50 🖼️", "MobileNetV2 ⚡"]
-)
-
-# Models
-models = {
-    "ResNet50": "models/resnet50_model.keras",
-    "MobileNetV2": "models/mobilenetv2_model.keras",
-}
-
-# Normalize the model choice to match the dictionary keys
-normalized_model_choice = model_choice.split()[0]  # Extract "ResNet50" or "MobileNetV2"
-model_path = models[normalized_model_choice]
-
-model_descriptions = {
-    "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
-    "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
-}
-
-# Use Markdown for description to fix error
-st.sidebar.markdown(
-    f"""
-    <div style="color:black; font-size:16px;">
-        ℹ️ {model_descriptions[normalized_model_choice]}
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
-
-# Main title
-st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
-
-# Instructions
+# Main section with updated numbers in list
 st.markdown(
     """
     <div class="content-block" style="background-color: #2e8b57; color: white;">
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
-        <ul>
-            <li>1 Téléchargez une image via la barre latérale.</li>
-            <li>2 Sélectionnez un modèle dans le menu latéral.</li>
-            <li>3 Le résultat s'affichera automatiquement après analyse.</li>
+        <ul class="custom-list">
+            <li>1. Téléchargez une image via la barre latérale.</li>
+            <li>2. Sélectionnez un modèle dans le menu latéral.</li>
+            <li>3. Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# Warning message
-st.markdown(
-    """
-    <div class="stWarning">
-        ⚠️ Veuillez télécharger une image valide.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Image animation
-image_path = "assets/images/imagecss.png"
-if os.path.exists(image_path):
-    image_base64 = get_image_base64(image_path)
-    if image_base64:
-        st.markdown(
-            f"""
-            <div>
-                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
 # Footer
 st.markdown(
     """
     <footer>
-        &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
-        <br>
-        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
-            GitHub
-        </a> |
-        <a href="https://streamlit.io" target="_blank">
-            Streamlit
-        </a>
+        &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI<br>
+        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">GitHub</a> |
+        <a href="https://streamlit.io" target="_blank">Streamlit</a>
     </footer>
     """,
     unsafe_allow_html=True
