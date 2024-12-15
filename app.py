@@ -169,8 +169,41 @@ if os.path.exists(image_path):
             unsafe_allow_html=True
         )
 
+# Analyse et prédiction
+def process_uploaded_image(uploaded_file, model_path):
+    model = load_cached_model(model_path)
+    input_shape = model.input_shape[1:3]
+    try:
+        image_array = preprocess_image(uploaded_file, target_size=input_shape)
+        predicted_class, confidence = predict_image(model, image_array)
+        return predicted_class, confidence
+    except Exception as e:
+        st.error(f"⚠️ Erreur lors de l'analyse de l'image : {e}")
+        return None, None
+
 if uploaded_file:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
+    with st.spinner("Analyse en cours... Veuillez patienter"):
+        predicted_class, confidence = process_uploaded_image(uploaded_file, model_path)
+        if predicted_class:
+            # Choix du style en fonction de la confiance
+            if confidence >= 80:
+                result_style = "background-color: #d4edda; color: #155724;"
+            elif confidence >= 50:
+                result_style = "background-color: #fff3cd; color: #856404;"
+            else:
+                result_style = "background-color: #f8d7da; color: #721c24;"
+            
+            st.markdown(
+                f"""
+                <div style="{result_style}; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px;">
+                    <h3>Résultat de l'analyse</h3>
+                    <p><strong>Classe prédite :</strong> {predicted_class}</p>
+                    <p><strong>Confiance :</strong> {confidence:.2f}%</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 else:
     st.warning("Veuillez télécharger une image pour commencer.")
 
