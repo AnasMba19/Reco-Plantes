@@ -167,7 +167,16 @@ model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
 }
-st.sidebar.info(f"ℹ️ <span style='color:black; font-size:16px;'>{model_descriptions[normalized_model_choice]}</span>", unsafe_allow_html=True)
+
+# Use Markdown for description to fix error
+st.sidebar.markdown(
+    f"""
+    <div style="color:black; font-size:16px;">
+        ℹ️ {model_descriptions[normalized_model_choice]}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
