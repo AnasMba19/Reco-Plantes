@@ -39,24 +39,45 @@ def set_custom_style():
             font-weight: bold;
         }}
 
-        /* Result styles */
-        .result-success {{
-            background-color: #d4edda;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+        /* Hover effects for buttons */
+        button:hover {{
+            transform: scale(1.05);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }}
-        .result-warning {{
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+
+        /* Animated image */
+        .animated-image {{
+            animation: rotateZoom 3s infinite ease-in-out;
+            display: block;
+            margin: 0 auto;
+            width: 250px;
         }}
-        .result-error {{
-            background-color: #f8d7da;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+
+        @keyframes rotateZoom {{
+            0% {{
+                transform: scale(1) rotate(0deg);
+            }}
+            50% {{
+                transform: scale(1.1) rotate(20deg);
+            }}
+            100% {{
+                transform: scale(1) rotate(0deg);
+            }}
+        }}
+
+        /* Instructions custom list */
+        .custom-list li {{
+            list-style: none;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }}
+        .custom-list li::before {{
+            content: '\2713';
+            color: #2e8b57;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 10px;
         }}
 
         /* Footer styles */
@@ -83,14 +104,23 @@ def set_custom_style():
         unsafe_allow_html=True
     )
 
-# Vérification des fichiers uploadés
-def validate_image(uploaded_file):
-    try:
-        image = Image.open(uploaded_file)
-        image.verify()
-        return True
-    except Exception:
-        return False
+# Instructions interactives
+def display_instructions():
+    st.markdown(
+        """
+        <div style="background-color: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px;">
+            <h2>Bienvenue dans l'application !</h2>
+            <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes.</p>
+            <p><strong>Comment utiliser :</strong></p>
+            <ul class="custom-list">
+                <li>1. Téléchargez une image via la barre latérale.</li>
+                <li>2. Sélectionnez un modèle dans le menu latéral.</li>
+                <li>3. Le résultat s'affichera automatiquement après analyse.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 def get_image_base64(image_path):
     try:
@@ -112,68 +142,35 @@ model_choice = st.sidebar.selectbox(
     ["ResNet50 🖼️", "MobileNetV2 ⚡"]
 )
 
-# Modèles
+# Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
 models = {
     "ResNet50": "models/resnet50_model.keras",
     "MobileNetV2": "models/mobilenetv2_model.keras",
 }
-
-# Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
-normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50" ou "MobileNetV2"
+normalized_model_choice = model_choice.split()[0]
 model_path = models[normalized_model_choice]
-model_descriptions = {
-    "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
-    "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
-}
 
-# Description du modèle dans la sidebar
-st.sidebar.markdown(
-    f"""
-    <div style="color:black; font-size:16px;">
-        ℹ️ {model_descriptions[normalized_model_choice]}
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# Instructions affichées en haut
+display_instructions()
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-# Titre principal
-st.markdown('<h1 style="color:#004d00; text-align:center;">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
-
-if uploaded_file:
-    if validate_image(uploaded_file):
-        st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-        with st.spinner("Analyse en cours... Veuillez patienter"):
-            model = load_cached_model(model_path)
-            input_shape = model.input_shape[1:3]
-            try:
-                image_array = preprocess_image(uploaded_file, target_size=input_shape)
-                predicted_class, confidence = predict_image(model, image_array)
-            except Exception as e:
-                st.error(f"⚠️ Erreur lors de l'analyse de l'image : {e}")
-                st.stop()
-
-        # Afficher les résultats avec style dynamique
-        if confidence >= 80:
-            result_style = "result-success"
-        elif confidence >= 50:
-            result_style = "result-warning"
-        else:
-            result_style = "result-error"
-
+# Image animée
+image_path = "assets/images/imagecss.png"
+if os.path.exists(image_path):
+    image_base64 = get_image_base64(image_path)
+    if image_base64:
         st.markdown(
             f"""
-            <div class="{result_style}">
-                <h2>Résultat de l'Analyse</h2>
-                <p>✅ Classe prédite : <strong>{predicted_class}</strong></p>
-                <p>📊 Confiance : <strong>{confidence:.2f}%</strong></p>
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
             </div>
             """,
             unsafe_allow_html=True
         )
-    else:
-        st.error("⚠️ Le fichier téléchargé n'est pas une image valide.")
+
+if uploaded_file:
+    st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
 else:
     st.warning("Veuillez télécharger une image pour commencer.")
 
@@ -182,12 +179,8 @@ st.markdown(
     """
     <footer>
         &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI<br>
-        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width: 20px; vertical-align: middle;"> GitHub
-        </a> |
-        <a href="https://streamlit.io" target="_blank">
-            <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit" style="width: 20px; vertical-align: middle;"> Streamlit
-        </a>
+        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">GitHub</a> |
+        <a href="https://streamlit.io" target="_blank">Streamlit</a>
     </footer>
     """,
     unsafe_allow_html=True
