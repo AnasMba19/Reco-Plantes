@@ -99,11 +99,13 @@ def set_custom_style():
         }}
 
         .stWarning {{
-            margin-top: 20px; /* Add margin to separate from above */
-            background-color: #e0f2e9; /* Light green background */
-            color: black; /* Black text color */
+            margin-top: 20px;
+            background-color: #D2B48C; /* Marron clair */
+            color: black;
             padding: 10px;
             border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
         }}
 
         /* Footer styles */
@@ -111,14 +113,14 @@ def set_custom_style():
             text-align: center;
             margin-top: 50px;
             font-size: 14px;
-            color: #555;
-            background-color: #8B4513; /* Brown color like root */
+            color: #F5F5DC; /* Blanc cassé */
+            background-color: #8B4513; /* Marron */
             padding: 10px;
             border-radius: 10px;
         }}
         footer a {{
             text-decoration: none;
-            color: #fff; /* White text */
+            color: #F5F5DC; /* Blanc cassé pour les liens */
         }}
         footer a:hover {{
             color: #FFD700; /* Golden yellow for hover effect */
@@ -268,6 +270,7 @@ st.markdown(
     <footer>
         © 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
         <br>
+        <a href="https
         <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
             <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width:20px; vertical-align:middle; margin-right:5px;">GitHub
         </a> |
