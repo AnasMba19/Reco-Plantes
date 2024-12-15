@@ -186,14 +186,14 @@ st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', uns
 # Instructions
 st.markdown(
     """
-    <div class="content-block">
+    <div class="content-block" style="background-color: #2e8b57; color: white;">
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
         <ul>
-            <li><span class='icon-number'>1</span> Téléchargez une image via la barre latérale.</li>
-            <li><span class='icon-number'>2</span> Sélectionnez un modèle dans le menu latéral.</li>
-            <li><span class='icon-number'>3</span> Le résultat s'affichera automatiquement après analyse.</li>
+            <li>1 Téléchargez une image via la barre latérale.</li>
+            <li>2 Sélectionnez un modèle dans le menu latéral.</li>
+            <li>3 Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
