@@ -28,7 +28,13 @@ def set_custom_style():
             padding: 20px;
         }}
 
-        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
+        [data-testid="stSidebar"] h1 {{
+            color: white;
+            font-weight: bold;
+            font-size: 22px; /* Increased size */
+        }}
+
+        [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
             color: white;
             font-weight: bold;
             font-size: 18px;
@@ -45,6 +51,7 @@ def set_custom_style():
             animation: scaleAnimation 2s infinite alternate;
             display: block;
             margin: 0 auto;
+            width: 250px; /* Increased size */
         }}
 
         @keyframes scaleAnimation {{
@@ -82,6 +89,10 @@ def set_custom_style():
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+
+        .stWarning {{
+            margin-top: 20px; /* Add margin to separate from above */
         }}
 
         /* Footer styles */
@@ -156,7 +167,7 @@ model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
 }
-st.sidebar.info(f"ℹ️ **Modèle choisi :** {model_descriptions[normalized_model_choice]}")
+st.sidebar.info(f"ℹ️ <span style='color:black; font-size:16px;'>{model_descriptions[normalized_model_choice]}</span>", unsafe_allow_html=True)
 
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
@@ -221,7 +232,7 @@ else:
         st.markdown(
             f"""
             <div style="text-align: center; margin-top: 20px;">
-                <img src="{image_base64}" alt="Plant Animation" class="animated-image" style="width: 200px;">
+                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
             </div>
             """,
             unsafe_allow_html=True
