@@ -66,6 +66,12 @@ def set_custom_style():
             }}
         }}
 
+        /* Enlever les puces de la liste */
+        ul {{
+            list-style-type: none; /* Enlève les points */
+            padding-left: 0; /* Ajuste le retrait à gauche */
+        }}
+
         /* Result styles */
         .result-success {{
             background-color: #d4edda;
@@ -213,71 +219,6 @@ st.markdown(
             <li>3 Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Analysis and results
-if uploaded_file:
-    st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-    with st.spinner("Analyse en cours... Veuillez patienter"):
-        model = load_model(model_path)
-        input_shape = model.input_shape[1:3]
-        image_array = preprocess_image(uploaded_file, target_size=input_shape)
-        predicted_class, confidence = predict_image(model, image_array)
-
-    result_style = "result-success" if confidence >= 80 else "result-warning" if confidence >= 50 else "result-error"
-    st.markdown(
-        f"""
-        <div class="result-block {result_style}">
-            <h2 class="subtitle">Résultat de l'Analyse</h2>
-            <p>✅ Classe prédite : <strong>{predicted_class}</strong></p>
-            <p>📊 Confiance : <strong>{confidence:.2f}%</strong></p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-else:
-    st.markdown(
-        """
-        <div class="stWarning">
-            ⚠️ Veuillez télécharger une image valide.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Animated image
-image_path = "assets/images/imagecss.png"
-
-if not os.path.exists(image_path):
-    st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
-else:
-    image_base64 = get_image_base64(image_path)
-    if image_base64:
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 20px;">
-                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-# Footer
-st.markdown(
-    """
-    <footer>
-        © 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI
-        <br>
-        <a href="https
-        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width:20px; vertical-align:middle; margin-right:5px;">GitHub
-        </a> |
-        <a href="https://streamlit.io" target="_blank">
-            <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit" style="width:20px; vertical-align:middle; margin-right:5px;">Streamlit
-        </a>
-    </footer>
     """,
     unsafe_allow_html=True
 )
