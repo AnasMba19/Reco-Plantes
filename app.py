@@ -93,6 +93,10 @@ def set_custom_style():
 
         .stWarning {{
             margin-top: 20px; /* Add margin to separate from above */
+            background-color: #e0f2e9; /* Light green background */
+            color: black; /* Black text color */
+            padding: 10px;
+            border-radius: 10px;
         }}
 
         /* Footer styles */
