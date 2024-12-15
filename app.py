@@ -31,21 +31,18 @@ def set_custom_style():
         [data-testid="stSidebar"] h1 {{
             color: white;
             font-weight: bold;
-            font-size: 22px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-size: 22px; /* Increased size */
         }}
 
         [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
-            color: #f0f0f0;
+            color: white;
             font-weight: bold;
             font-size: 18px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }}
 
         /* Hover effects for buttons */
         button:hover {{
-            transform: scale(1.1);
-            transition: transform 0.3s ease-in-out;
+            transform: scale(1.05);
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }}
 
@@ -54,7 +51,7 @@ def set_custom_style():
             animation: rotateZoom 3s infinite ease-in-out;
             display: block;
             margin: 0 auto;
-            width: 250px;
+            width: 250px; /* Increased size */
         }}
 
         @keyframes rotateZoom {{
@@ -75,15 +72,10 @@ def set_custom_style():
             margin: 10px 0;
             display: flex;
             align-items: center;
-            transition: all 0.3s ease-in-out;
-        }}
-        .custom-list li:hover {{
-            transform: translateX(10px);
-            color: #004d00;
         }}
         .custom-list li::before {{
-            content: '\2713';
-            color: #2e8b57;
+            content: '\\2713'; /* Checkmark icon */
+            color: #2e8b57; /* Dark green */
             font-weight: bold;
             font-size: 20px;
             margin-right: 10px;
@@ -122,32 +114,67 @@ def set_custom_style():
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }}
 
+        /* Backdrop filter for content block */
+        .content-block {{
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+
+        .stWarning {{
+            margin-top: 20px; /* Add margin to separate from above */
+            background-color: #D2B48C; /* Marron clair */
+            color: black; /* Black text color */
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }}
+
         /* Footer styles */
         footer {{
             text-align: center;
             margin-top: 50px;
-            font-size: 16px;
-            color: #F5F5DC;
-            background-color: #8B4513;
-            padding: 20px 10px;
+            font-size: 14px;
+            color: #F5F5DC; /* Blanc cassé */
+            background-color: #8B4513; /* Marron */
+            padding: 10px;
             border-radius: 10px;
-            letter-spacing: 0.5px;
         }}
         footer a {{
             text-decoration: none;
-            color: #F5F5DC;
+            color: #F5F5DC; /* Blanc cassé pour les liens */
             margin: 0 5px;
         }}
         footer a:hover {{
-            color: #FFD700;
+            color: #FFD700; /* Golden yellow for hover effect */
             text-decoration: underline;
         }}
-
-        /* Espacement des blocs */
-        .content-block, .result-block {{
-            margin-bottom: 30px;
+        footer img {{
+            width: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
         }}
 
+        /* Responsive design */
+        @media (max-width: 768px) {{
+            .stApp {{
+                font-size: 14px;
+            }}
+        }}
+
+        /* Animation for the title */
+        .title {{
+            animation: fadeIn 2s ease-in-out;
+            color: #004d00; /* Dark green color */
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -180,7 +207,7 @@ models = {
 }
 
 # Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
-normalized_model_choice = model_choice.split()[0]
+normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50" ou "MobileNetV2"
 model_path = models[normalized_model_choice]
 
 model_descriptions = {
