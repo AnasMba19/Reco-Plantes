@@ -48,15 +48,22 @@ def set_custom_style():
 
         /* Animated image */
         .animated-image {{
-            animation: scaleAnimation 2s infinite alternate;
+            animation: rotateZoom 3s infinite ease-in-out;
             display: block;
             margin: 0 auto;
             width: 250px; /* Increased size */
         }}
 
-        @keyframes scaleAnimation {{
-            from {{ transform: scale(1); }}
-            to {{ transform: scale(1.1); }}
+        @keyframes rotateZoom {{
+            0% {{
+                transform: scale(1) rotate(0deg);
+            }}
+            50% {{
+                transform: scale(1.1) rotate(20deg);
+            }}
+            100% {{
+                transform: scale(1) rotate(0deg);
+            }}
         }}
 
         /* Result styles */
