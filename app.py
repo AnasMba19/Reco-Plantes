@@ -134,7 +134,7 @@ def load_tflite_model(model_path):
     try:
         interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
-        st.write(f"Modèle chargé : {model_path}")  # Pour débogage
+       # st.write(f"Modèle chargé : {model_path}")  # Pour débogage
         return interpreter
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle TFLite : {e}")
