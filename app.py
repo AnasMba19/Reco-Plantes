@@ -1,5 +1,6 @@
-import os
+import os 
 import streamlit as st
+import base64
 from PIL import Image
 import numpy as np
 from tflite_runtime.interpreter import Interpreter  # Utiliser l'interpréteur TFLite
@@ -128,11 +129,12 @@ def set_custom_style():
     )
 
 # Fonction pour charger les modèles TFLite avec cache
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_tflite_model(model_path):
     try:
         interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
+        st.write(f"Modèle chargé : {model_path}")  # Pour débogage
         return interpreter
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle TFLite : {e}")
@@ -144,11 +146,20 @@ def preprocess_image(uploaded_file, target_size):
         img = Image.open(uploaded_file).convert('RGB')
         img = img.resize(target_size)
         img_array = np.array(img) / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
+        img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
         return img_array
     except Exception as e:
         st.error(f"Erreur lors du prétraitement de l'image : {e}")
         return None
+
+# Fonction pour nettoyer les noms de classes
+def clean_class_name(class_name):
+    class_name = class_name.replace('_', ' ').replace('  ', ' ').strip()
+    class_name = class_name.replace('(including sour)', 'including sour')
+    class_name = class_name.replace('(Citrus greening)', 'Citrus greening')
+    class_name = class_name.replace('(maize)', 'maize')
+    # Ajouter d'autres remplacements si nécessaire
+    return class_name
 
 # Fonction pour obtenir les détails de la maladie
 def get_disease_details(disease_name):
@@ -157,8 +168,15 @@ def get_disease_details(disease_name):
             'symptoms': 'Taches brunes sur les feuilles, parfois en forme de cercle.',
             'impact': 'Réduction de la photosynthèse et du rendement des fruits.',
             'treatment': 'Appliquez un fongicide à base de cuivre.',
-            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l'air.'
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
         },
+        # ... (Les autres classes restent inchangées)
+        'Tomato healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        }
         # Ajoutez les 10 autres classes restantes ici de manière similaire
     }
     return disease_details.get(disease_name, None)
@@ -243,6 +261,12 @@ os.makedirs(os.path.dirname(model_local_path_resnet), exist_ok=True)
 interpreter_resnet = load_tflite_model(model_local_path_resnet)
 interpreter_mobilenet = load_tflite_model(model_local_path_mobilenet)
 interpreter_cnn = load_tflite_model(model_local_path_cnn)
+
+# Vérification de la charge des modèles
+st.write("Interpréteurs chargés :")
+st.write(f"ResNet50 : {interpreter_resnet is not None}")
+st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
+st.write(f"CNN : {interpreter_cnn is not None}")
 
 # Sidebar
 st.sidebar.title("Reco-Plantes")
@@ -394,3 +418,5 @@ else:
         """,
         unsafe_allow_html=True
     )
+
+
