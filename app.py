@@ -3,7 +3,7 @@ import streamlit as st
 import base64
 from PIL import Image
 import numpy as np
-from tensorflow.lite import Interpreter  # Utiliser l'interpréteur TFLite
+from tflite_runtime.interpreter import Interpreter  # Utiliser l'interpréteur TFLite
 
 # Fonction pour appliquer les styles personnalisés
 def set_custom_style():

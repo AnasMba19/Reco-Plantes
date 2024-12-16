@@ -1,6 +1,6 @@
+tflite-runtime==2.9.0
 streamlit==1.23.0
 streamlit-lottie
-tensorflow
 pillow
 numpy
 scipy
