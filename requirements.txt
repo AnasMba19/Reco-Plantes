@@ -3,6 +3,7 @@ streamlit-lottie
 tensorflow
 pillow
 numpy
+gdown
 scipy
 matplotlib
 scikit-learn

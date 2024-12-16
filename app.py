@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import gdown  # Assurez-vous que gdown est installé via requirements.txt
 import base64
 from PIL import Image
 import numpy as np
@@ -129,6 +130,21 @@ def set_custom_style():
         """,
         unsafe_allow_html=True
     )
+
+# Fonction pour télécharger le modèle depuis Google Drive
+@st.cache_resource
+def download_model_from_drive(drive_link, output_path):
+    if not os.path.exists(output_path):
+        st.info("Téléchargement du modèle, veuillez patienter...")
+        try:
+            gdown.download(drive_link, output_path, quiet=False)
+            st.success("Modèle téléchargé avec succès.")
+        except Exception as e:
+            st.error(f"Erreur lors du téléchargement du modèle : {e}")
+            return False
+    else:
+        st.info("Modèle déjà téléchargé.")
+    return True
 
 # Fonction pour charger les modèles avec cache
 @st.cache_resource
@@ -387,149 +403,169 @@ class_names = [
 # Appliquer les styles personnalisés
 set_custom_style()
 
+# Chemins locaux pour les modèles
+model_local_path_resnet = "models/phil_resnet_best_20241202_v7_epoch25.keras"
+model_local_path_mobilenet = "models/Anas_Essai_1_MOB_L2.keras"
+model_local_path_cnn = "models/phil_cnn_2_best_20241122_v1_epoch61.keras"
+
+# Créer le dossier 'models' s'il n'existe pas
+os.makedirs(os.path.dirname(model_local_path_resnet), exist_ok=True)
+
+# Lien de téléchargement direct Google Drive pour ResNet50
+drive_link_resnet = "https://drive.google.com/uc?id=1iawxZGSfl8aR8NJL_rqQDWosmJ2SMWBj&export=download"
+
+# Télécharger le modèle ResNet50 si nécessaire
+download_success_resnet = download_model_from_drive(drive_link_resnet, model_local_path_resnet)
+
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
 # Dictionnaire des chemins des modèles
 model_paths = {
-    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25.keras",
-    "MobileNetV2": "models/Anas_Essai_1_MOB_L2.keras",
-    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61.keras",
+    "ResNet50": model_local_path_resnet,
+    "MobileNetV2": model_local_path_mobilenet,
+    "CNN": model_local_path_cnn,
 }
 
-# Sélection du modèle
-selected_model = st.sidebar.selectbox("Choisissez un modèle :", list(model_paths.keys()))
-
-# Chargement du modèle sélectionné
-model_path = model_paths.get(selected_model)
-classifier = load_classifier(model_path)
-
-# Description du modèle dans la sidebar
-model_descriptions = {
-    "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
-    "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
-    "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",
-}
-
-st.sidebar.markdown(
-    f"""
-    <div style="color:black; font-size:16px;">
-        ℹ️ {model_descriptions.get(selected_model, 'Modèle non décrit.')}
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Upload de l'image
-uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
-
-# Titre principal avec animation
-st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
-
-# Instructions avec liste personnalisée
-st.markdown(
-    """
-    <div class="content-block">
-        <h2 class="subtitle">Bienvenue dans l'application !</h2>
-        <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
-        <p><strong>Comment utiliser :</strong></p>
-        <ul>
-            <li>Téléchargez une image via la barre latérale.</li>
-            <li>Sélectionnez un modèle dans le menu latéral.</li>
-            <li>Le résultat s'affichera automatiquement après analyse.</li>
-        </ul>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Analyse et résultats
-if uploaded_file and classifier:
-    st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-    with st.spinner("Analyse en cours... Veuillez patienter"):
-        input_shape = classifier.input_shape[1:3]
-        image_array = preprocess_image(uploaded_file, target_size=input_shape)
-        if image_array is not None:
-            predicted_class, confidence = predict_and_get_details(classifier, image_array, class_names)
-        else:
-            predicted_class, confidence = None, 0
-
-    if predicted_class:
-        # Nettoyer la prédiction
-        predicted_class_clean = clean_class_name(predicted_class)
-
-        # Récupérer les détails de la maladie
-        disease_details = get_disease_details(predicted_class_clean)
-
-        # Déterminer le style en fonction de la confiance
-        if confidence >= 80:
-            result_style = "result-success"
-        elif confidence >= 50:
-            result_style = "result-warning"
-        else:
-            result_style = "result-error"
-
-        recommendations = ""
-
-        if 'healthy' in predicted_class_clean.lower():
-            diagnosis = "Feuille en bonne santé."
-            recommendations = "<strong>Aucune action nécessaire.</strong>"
-        else:
-            diagnosis = f"Maladie détectée - {predicted_class_clean}."
-            if disease_details:
-                recommendations = f"""
-                <strong>Symptômes :</strong> {disease_details['symptoms']}<br>
-                <strong>Impact :</strong> {disease_details['impact']}<br>
-                <strong>Traitement :</strong> {disease_details['treatment']}<br>
-                <strong>Prévention :</strong> {disease_details['prevention']}
-                """
-            else:
-                recommendations = "Aucune recommandation disponible. Veuillez consulter un expert agricole."
-
-        # Message en cas d'incertitude
-        if confidence < 50:
-            st.warning("⚠️ La confiance dans la prédiction est faible. Essayez une photo plus claire ou consultez un expert.")
-
-        # Affichage des résultats
-        st.markdown(
-            f"""
-            <div class="result-block {result_style}">
-                <h2 class="subtitle">Résultat de l'Analyse</h2>
-                <p><strong>Résultat :</strong> {diagnosis}</p>
-                <p><strong>Confiance :</strong> {confidence:.2f}%</p>
-                <hr>
-                <div>
-                    {recommendations}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    else:
-        st.error("⚠️ Impossible de déterminer le résultat de l'analyse.")
+# Vérifier que le modèle ResNet50 a été téléchargé avant de l'utiliser
+if not download_success_resnet:
+    st.error("Le modèle ResNet50 n'a pas pu être téléchargé. Veuillez vérifier le lien de téléchargement.")
 else:
-    if not uploaded_file:
-        st.markdown(
-            """
-            <div class="stWarning">
-                ⚠️ Veuillez télécharger une image valide.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    # Sélection du modèle
+    selected_model = st.sidebar.selectbox("Choisissez un modèle :", list(model_paths.keys()))
 
-# Footer avec icônes
-st.markdown(
-    """
-    <footer>
-        &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI<br>
-        <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub"> GitHub
-        </a> |
-        <a href="https://streamlit.io" target="_blank">
-            <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit"> Streamlit
-        </a>
-    </footer>
-    """,
-    unsafe_allow_html=True
-)
+    # Chemin du modèle sélectionné
+    model_path = model_paths.get(selected_model)
+
+    # Charger le modèle sélectionné avec mise en cache
+    classifier = load_classifier(model_path)
+
+    # Description du modèle dans la sidebar
+    model_descriptions = {
+        "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
+        "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
+        "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",
+    }
+
+    st.sidebar.markdown(
+        f"""
+        <div style="color:black; font-size:16px;">
+            ℹ️ {model_descriptions.get(selected_model, 'Modèle non décrit.')}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Upload de l'image
+    uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
+
+    # Titre principal avec animation
+    st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
+
+    # Instructions avec liste personnalisée
+    st.markdown(
+        """
+        <div class="content-block">
+            <h2 class="subtitle">Bienvenue dans l'application !</h2>
+            <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
+            <p><strong>Comment utiliser :</strong></p>
+            <ul>
+                <li>Téléchargez une image via la barre latérale.</li>
+                <li>Sélectionnez un modèle dans le menu latéral.</li>
+                <li>Le résultat s'affichera automatiquement après analyse.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Analyse et résultats
+    if uploaded_file and classifier:
+        st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
+        with st.spinner("Analyse en cours... Veuillez patienter"):
+            input_shape = classifier.input_shape[1:3]
+            image_array = preprocess_image(uploaded_file, target_size=input_shape)
+            if image_array is not None:
+                predicted_class, confidence = predict_and_get_details(classifier, image_array, class_names)
+            else:
+                predicted_class, confidence = None, 0
+
+        if predicted_class:
+            # Nettoyer la prédiction
+            predicted_class_clean = clean_class_name(predicted_class)
+
+            # Récupérer les détails de la maladie
+            disease_details = get_disease_details(predicted_class_clean)
+
+            # Déterminer le style en fonction de la confiance
+            if confidence >= 80:
+                result_style = "result-success"
+            elif confidence >= 50:
+                result_style = "result-warning"
+            else:
+                result_style = "result-error"
+
+            recommendations = ""
+
+            if 'healthy' in predicted_class_clean.lower():
+                diagnosis = "Feuille en bonne santé."
+                recommendations = "<strong>Aucune action nécessaire.</strong>"
+            else:
+                diagnosis = f"Maladie détectée - {predicted_class_clean}."
+                if disease_details:
+                    recommendations = f"""
+                    <strong>Symptômes :</strong> {disease_details['symptoms']}<br>
+                    <strong>Impact :</strong> {disease_details['impact']}<br>
+                    <strong>Traitement :</strong> {disease_details['treatment']}<br>
+                    <strong>Prévention :</strong> {disease_details['prevention']}
+                    """
+                else:
+                    recommendations = "Aucune recommandation disponible. Veuillez consulter un expert agricole."
+
+            # Message en cas d'incertitude
+            if confidence < 50:
+                st.warning("⚠️ La confiance dans la prédiction est faible. Essayez une photo plus claire ou consultez un expert.")
+
+            # Affichage des résultats
+            st.markdown(
+                f"""
+                <div class="result-block {result_style}">
+                    <h2 class="subtitle">Résultat de l'Analyse</h2>
+                    <p><strong>Résultat :</strong> {diagnosis}</p>
+                    <p><strong>Confiance :</strong> {confidence:.2f}%</p>
+                    <hr>
+                    <div>
+                        {recommendations}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            st.error("⚠️ Impossible de déterminer le résultat de l'analyse.")
+    else:
+        if not uploaded_file:
+            st.markdown(
+                """
+                <div class="stWarning">
+                    ⚠️ Veuillez télécharger une image valide.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    # Footer avec icônes
+    st.markdown(
+        """
+        <footer>
+            &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI<br>
+            <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub"> GitHub
+            </a> |
+            <a href="https://streamlit.io" target="_blank">
+                <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit"> Streamlit
+            </a>
+        </footer>
+        """,
+        unsafe_allow_html=True
+    )
