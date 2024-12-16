@@ -200,11 +200,11 @@ model_choice = st.sidebar.selectbox(
     ["ResNet50 🍃", "MobileNetV2 🍃", "CNN 🍃"]  # Ajout de "CNN 🍃"
 )
 
-# Modèles
+# Modèles avec l'extension .keras
 models = {
-    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25",
-    "MobileNetV2": "models/Anas_Essai_1_MOB_L2",
-    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61",  # Ajout du modèle CNN
+    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25.keras",  # Ajout du .keras
+    "MobileNetV2": "models/Anas_Essai_1_MOB_L2.keras",  # Si c'est .keras
+    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61.keras",  # Si c'est .keras
 }
 
 # Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
