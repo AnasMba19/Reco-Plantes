@@ -189,6 +189,27 @@ def get_image_base64(image_path):
         st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
         return None
 
+# Fonction pour obtenir les détails de la maladie
+def get_disease_details(disease_name):
+    disease_details = {
+        "Black Spot": {
+            "symptoms": "Petites taches noires circulaires, feuilles jaunies.",
+            "impact": "Réduction du rendement si non traité.",
+            "treatment": "Appliquez un fongicide naturel à base de cuivre.",
+            "prevention": "Évitez l'excès d'humidité et nettoyez vos outils de taille.",
+            "reference_image": "assets/images/black_spot_reference.png"  # Chemin vers l'image de référence
+        },
+        "Powdery Mildew": {
+            "symptoms": "Poudre blanche sur les feuilles, croissance ralentie.",
+            "impact": "Affaiblissement de la plante et réduction de la photosynthèse.",
+            "treatment": "Utilisez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.",
+            "prevention": "Assurez une bonne circulation de l'air et évitez l'arrosage par le dessus.",
+            "reference_image": "assets/images/powdery_mildew_reference.png"
+        },
+        # Ajoutez d'autres maladies ici
+    }
+    return disease_details.get(disease_name, None)
+
 # Appliquer les styles personnalisés
 set_custom_style()
 
@@ -214,12 +235,14 @@ model_path = models[normalized_model_choice]
 # Vérification de l'existence du modèle avant de le charger
 if not os.path.exists(model_path):
     st.error(f"Le modèle n'a pas été trouvé à {model_path}")
+    model = None
 else:
     try:
         model = load_model(model_path)
         print(f"Modèle {model_path} chargé avec succès")
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle : {e}")
+        model = None
 
 # Description du modèle dans la sidebar
 model_descriptions = {
@@ -269,7 +292,7 @@ st.markdown(
 )
 
 # Analyse et résultats
-if uploaded_file:
+if uploaded_file and model:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
     with st.spinner("Analyse en cours... Veuillez patienter"):
         input_shape = model.input_shape[1:3]
@@ -278,33 +301,84 @@ if uploaded_file:
             predicted_class, confidence = predict_image(model, image_array)
         except Exception as e:
             st.error(f"Erreur lors du prétraitement ou de la prédiction de l'image : {e}")
+            predicted_class, confidence = None, 0
 
-    if confidence >= 80:
-        result_style = "result-success"
-    elif confidence >= 50:
-        result_style = "result-warning"
+    if predicted_class:
+        if confidence >= 80:
+            result_style = "result-success"
+        elif confidence >= 50:
+            result_style = "result-warning"
+        else:
+            result_style = "result-error"
+
+        # Vérifier si la prédiction est "Sain" ou une maladie
+        if predicted_class.lower() == "sain" or predicted_class.lower() == "healthy":
+            diagnosis = "Feuille en bonne santé."
+            recommendations = "<strong>Aucune action nécessaire.</strong>"
+            disease_details = None
+            reference_image_html = ""
+        else:
+            diagnosis = f"Maladie détectée - {predicted_class}."
+            disease_details = get_disease_details(predicted_class)
+            if disease_details:
+                symptoms = disease_details["symptoms"]
+                impact = disease_details["impact"]
+                treatment = disease_details["treatment"]
+                prevention = disease_details["prevention"]
+                reference_image_path = disease_details["reference_image"]
+
+                # Charger l'image de référence
+                if os.path.exists(reference_image_path):
+                    ref_image_base64 = get_image_base64(reference_image_path)
+                    reference_image_html = f'<img src="{ref_image_base64}" alt="Photo de référence" style="width:300px;">'
+                else:
+                    reference_image_html = "<p>⚠️ Image de référence non disponible.</p>"
+
+                recommendations = f"""
+                <strong>Symptômes :</strong> {symptoms}<br>
+                <strong>Impact :</strong> {impact}<br>
+                <strong>Traitement :</strong> {treatment}<br>
+                <strong>Prévention :</strong> {prevention}
+                """
+            else:
+                recommendations = "<strong>Aucune recommandation disponible.</strong>"
+                reference_image_html = ""
+
+        # Message en cas d'incertitude
+        if confidence < 50:
+            diagnosis = "Nous ne sommes pas sûrs du diagnostic."
+            recommendations = "Essayez de prendre une photo plus claire ou consultez un expert agricole."
+            reference_image_html = ""
+
+        st.markdown(
+            f"""
+            <div class="result-block {result_style}">
+                <h2 class="subtitle">Résultat de l'Analyse</h2>
+                <p><strong>Résultat :</strong> {diagnosis}</p>
+                <p><strong>Confiance :</strong> {confidence:.2f}%</p>
+                <hr>
+                <div>
+                    {recommendations}
+                </div>
+                <div style="margin-top: 10px;">
+                    {reference_image_html}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     else:
-        result_style = "result-error"
-
-    st.markdown(
-        f"""
-        <div class="result-block {result_style}">
-            <h2 class="subtitle">Résultat de l'Analyse</h2>
-            <p>✅ Classe prédite : <strong>{predicted_class}</strong></p>
-            <p>📊 Confiance : <strong>{confidence:.2f}%</strong></p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.error("⚠️ Impossible de déterminer le résultat de l'analyse.")
 else:
-    st.markdown(
-        """
-        <div class="stWarning">
-            ⚠️ Veuillez télécharger une image valide.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    if not uploaded_file:
+        st.markdown(
+            """
+            <div class="stWarning">
+                ⚠️ Veuillez télécharger une image valide.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # Image animée
 image_path = "assets/images/imagecss.png"
