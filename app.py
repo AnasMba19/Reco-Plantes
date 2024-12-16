@@ -28,25 +28,16 @@ def set_custom_style():
             padding: 20px;
         }}
 
-        /* Fond marron pour le bloc regroupé */
-        .sidebar-block {{
-            background-color: #8B4513; /* Marron */
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
-            color: #FFFFFF;
+        [data-testid="stSidebar"] h1 {{
+            color: white;
+            font-weight: bold;
+            font-size: 22px; /* Increased size */
         }}
-        .sidebar-block label, .sidebar-block p {{
-            color: #FFFFFF; /* Texte blanc */
-            margin-bottom: 10px;
-        }}
-        .sidebar-block select, .sidebar-block input {{
-            width: 100%;
-            padding: 5px;
-            border-radius: 5px;
-            margin-top: 5px;
-            border: 1px solid #F5F5DC; /* Blanc cassé */
+
+        [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
         }}
 
         /* Hover effects for buttons */
@@ -55,28 +46,134 @@ def set_custom_style():
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }}
 
+        /* Animated image */
+        .animated-image {{
+            animation: rotateZoom 3s infinite ease-in-out;
+            display: block;
+            margin: 0 auto;
+            width: 250px; /* Increased size */
+        }}
+
+        @keyframes rotateZoom {{
+            0% {{
+                transform: scale(1) rotate(0deg);
+            }}
+            50% {{
+                transform: scale(1.1) rotate(20deg);
+            }}
+            100% {{
+                transform: scale(1) rotate(0deg);
+            }}
+        }}
+
+        /* Custom list icons */
+        .custom-list li {{
+            list-style: none;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }}
+        .custom-list li::before {{
+            content: '\\2713'; /* Checkmark icon */
+            color: #2e8b57; /* Dark green */
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 10px;
+        }}
+        .custom-list li span.number {{
+            color: #ffffff;
+            background: #006400;
+            border-radius: 50%;
+            padding: 5px 10px;
+            margin-right: 10px;
+            display: inline-block;
+            width: 25px;
+            text-align: center;
+        }}
+
+        /* Result styles */
+        .result-success {{
+            background-color: #d4edda;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+        .result-warning {{
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+        .result-error {{
+            background-color: #f8d7da;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+
+        /* Backdrop filter for content block */
+        .content-block {{
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }}
+
+        .stWarning {{
+            margin-top: 20px; /* Add margin to separate from above */
+            background-color: #D2B48C; /* Marron clair */
+            color: black; /* Black text color */
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+        }}
+
         /* Footer styles */
         footer {{
             text-align: center;
             margin-top: 50px;
             font-size: 14px;
-            color: #F5F5DC;
+            color: #F5F5DC; /* Blanc cassé */
             background-color: #8B4513; /* Marron */
             padding: 10px;
             border-radius: 10px;
         }}
         footer a {{
             text-decoration: none;
-            color: #F5F5DC;
+            color: #F5F5DC; /* Blanc cassé pour les liens */
+            margin: 0 5px;
         }}
         footer a:hover {{
-            color: #FFD700;
+            color: #FFD700; /* Golden yellow for hover effect */
             text-decoration: underline;
         }}
         footer img {{
             width: 20px;
             vertical-align: middle;
             margin-right: 5px;
+        }}
+
+        /* Responsive design */
+        @media (max-width: 768px) {{
+            .stApp {{
+                font-size: 14px;
+            }}
+        }}
+
+        /* Animation for the title */
+        .title {{
+            animation: fadeIn 2s ease-in-out;
+            color: #004d00; /* Dark green color */
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
         }}
         </style>
         """,
@@ -98,39 +195,61 @@ set_custom_style()
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
-# Bloc regroupé avec fond marron
+model_choice = st.sidebar.selectbox(
+    "Choisissez un modèle :",
+    ["ResNet50 🖼️", "MobileNetV2 ⚡"]
+)
+
+# Modèles
+models = {
+    "ResNet50": "models/resnet50_model.keras",
+    "MobileNetV2": "models/mobilenetv2_model.keras",
+}
+
+# Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
+normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50" ou "MobileNetV2"
+model_path = models[normalized_model_choice]
+
+model_descriptions = {
+    "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
+    "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
+}
+
+# Description du modèle dans la sidebar
 st.sidebar.markdown(
-    """
-    <div class="sidebar-block">
-        <label for="model-select">Choisissez un modèle :</label>
-        <select id="model-select">
-            <option>ResNet50 🖼️</option>
-            <option>MobileNetV2 ⚡</option>
-        </select>
-        <p style="margin-top: 15px;">📥 <strong>Téléchargez une image</strong></p>
-        <p>Drag and drop file here<br>Limit 200MB per file • JPG, PNG, JPEG</p>
+    f"""
+    <div style="color:black; font-size:16px;">
+        ℹ️ {model_descriptions[normalized_model_choice]}
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# Téléchargement de fichier
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-# Titre principal
+# Titre principal avec animation
 st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
 
-# Instructions
+# Instructions avec liste personnalisée
 st.markdown(
     """
     <div class="content-block" style="background-color: #2e8b57; color: white;">
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
-        <ul>
-            <li>1. Téléchargez une image via la barre latérale.</li>
-            <li>2. Sélectionnez un modèle dans le menu latéral.</li>
-            <li>3. Le résultat s'affichera automatiquement après analyse.</li>
+        <ul class="custom-list">
+            <li>
+                <span class="number">1</span>
+                Téléchargez une image via la barre latérale.
+            </li>
+            <li>
+                <span class="number">2</span>
+                Sélectionnez un modèle dans le menu latéral.
+            </li>
+            <li>
+                <span class="number">3</span>
+                Le résultat s'affichera automatiquement après analyse.
+            </li>
         </ul>
     </div>
     """,
@@ -141,12 +260,11 @@ st.markdown(
 if uploaded_file:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
     with st.spinner("Analyse en cours... Veuillez patienter"):
-        model = load_model(models[model_choice.split()[0]])
+        model = load_model(model_path)
         input_shape = model.input_shape[1:3]
         image_array = preprocess_image(uploaded_file, target_size=input_shape)
         predicted_class, confidence = predict_image(model, image_array)
 
-    # Affichage des résultats
     if confidence >= 80:
         result_style = "result-success"
     elif confidence >= 50:
@@ -174,7 +292,24 @@ else:
         unsafe_allow_html=True
     )
 
-# Footer
+# Image animée
+image_path = "assets/images/imagecss.png"
+
+if not os.path.exists(image_path):
+    st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
+else:
+    image_base64 = get_image_base64(image_path)
+    if image_base64:
+        st.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 20px;">
+                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# Footer avec icônes
 st.markdown(
     """
     <footer>
