@@ -1,10 +1,14 @@
 import os
 import streamlit as st
 import base64
-from models.main import load_model, preprocess_image, predict_image, class_names
+from PIL import Image
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
 
+# Fonction pour appliquer les styles personnalisés
 def set_custom_style():
-    # URL du background depuis GitHub
     background_url = "https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/background.jpg"
     st.markdown(
         f"""
@@ -31,7 +35,7 @@ def set_custom_style():
         [data-testid="stSidebar"] h1 {{
             color: white;
             font-weight: bold;
-            font-size: 22px; /* Increased size */
+            font-size: 22px;
         }}
 
         [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label {{
@@ -46,91 +50,15 @@ def set_custom_style():
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }}
 
-        /* Animated image */
-        .animated-image {{
-            animation: rotateZoom 3s infinite ease-in-out;
-            display: block;
-            margin: 0 auto;
-            width: 250px; /* Increased size */
+        /* Animation for the title */
+        .title {{
+            animation: fadeIn 2s ease-in-out;
+            color: #004d00;
         }}
 
-        @keyframes rotateZoom {{
-            0% {{
-                transform: scale(1) rotate(0deg);
-            }}
-            50% {{
-                transform: scale(1.1) rotate(20deg);
-            }}
-            100% {{
-                transform: scale(1) rotate(0deg);
-            }}
-        }}
-
-        /* Custom list icons */
-        .custom-list li {{
-            list-style: none;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-        }}
-        .custom-list li::before {{
-            content: '\\2713'; /* Checkmark icon */
-            color: #2e8b57; /* Dark green */
-            font-weight: bold;
-            font-size: 20px;
-            margin-right: 10px;
-        }}
-        .custom-list li span.number {{
-            color: #ffffff;
-            background: #006400;
-            border-radius: 50%;
-            padding: 5px 10px;
-            margin-right: 10px;
-            display: inline-block;
-            width: 25px;
-            text-align: center;
-        }}
-
-        /* Result styles */
-        .result-success {{
-            background-color: #d4edda;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }}
-        .result-warning {{
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }}
-        .result-error {{
-            background-color: #f8d7da;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }}
-
-        /* Backdrop filter for content block */
-        .content-block {{
-            backdrop-filter: blur(5px);
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }}
-
-        .stWarning {{
-            margin-top: 20px; /* Add margin to separate from above */
-            background-color: #D2B48C; /* Marron clair */
-            color: black; /* Black text color */
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: bold;
-            text-align: center;
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
         }}
 
         /* Footer styles */
@@ -138,18 +66,18 @@ def set_custom_style():
             text-align: center;
             margin-top: 50px;
             font-size: 14px;
-            color: #F5F5DC; /* Blanc cassé */
-            background-color: #8B4513; /* Marron */
+            color: #F5F5DC;
+            background-color: #8B4513;
             padding: 10px;
             border-radius: 10px;
         }}
         footer a {{
             text-decoration: none;
-            color: #F5F5DC; /* Blanc cassé pour les liens */
+            color: #F5F5DC;
             margin: 0 5px;
         }}
         footer a:hover {{
-            color: #FFD700; /* Golden yellow for hover effect */
+            color: #FFD700;
             text-decoration: underline;
         }}
         footer img {{
@@ -157,58 +85,276 @@ def set_custom_style():
             vertical-align: middle;
             margin-right: 5px;
         }}
-
-        /* Responsive design */
-        @media (max-width: 768px) {{
-            .stApp {{
-                font-size: 14px;
-            }}
-        }}
-
-        /* Animation for the title */
-        .title {{
-            animation: fadeIn 2s ease-in-out;
-            color: #004d00; /* Dark green color */
-        }}
-
-        @keyframes fadeIn {{
-            from {{ opacity: 0; }}
-            to {{ opacity: 1; }}
-        }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-def get_image_base64(image_path):
+# Fonction pour charger les modèles avec cache
+@st.cache_resource
+def load_classifier(model_path):
     try:
-        with open(image_path, "rb") as image_file:
-            encoded = base64.b64encode(image_file.read()).decode()
-        return f"data:image/png;base64,{encoded}"
+        classifier = load_model(model_path)
+        return classifier
     except Exception as e:
-        st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
+        st.error(f"Erreur lors du chargement du modèle : {e}")
         return None
+
+# Fonction pour prétraiter l'image
+def preprocess_image(uploaded_file, target_size):
+    try:
+        img = Image.open(uploaded_file).convert('RGB')
+        img = img.resize(target_size)
+        img_array = np.array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        return img_array
+    except Exception as e:
+        st.error(f"Erreur lors du prétraitement de l'image : {e}")
+        return None
+
+# Fonction pour nettoyer les noms de classes
+def clean_class_name(class_name):
+    class_name = class_name.replace('_', ' ').replace('  ', ' ').strip()
+    class_name = class_name.replace('(including sour)', 'including sour')
+    class_name = class_name.replace('(Citrus greening)', 'Citrus greening')
+    class_name = class_name.replace('(maize)', 'maize')
+    # Ajouter d'autres remplacements si nécessaire
+    return class_name
 
 # Fonction pour obtenir les détails de la maladie
 def get_disease_details(disease_name):
     disease_details = {
-        "Black Spot": {
-            "symptoms": "Petites taches noires circulaires, feuilles jaunies.",
-            "impact": "Réduction du rendement si non traité.",
-            "treatment": "Appliquez un fongicide naturel à base de cuivre.",
-            "prevention": "Évitez l'excès d'humidité et nettoyez vos outils de taille.",
-            "reference_image": "assets/images/black_spot_reference.png"  # Chemin vers l'image de référence
+        'Apple Apple scab': {
+            'symptoms': 'Taches brunes sur les feuilles, parfois en forme de cercle.',
+            'impact': 'Réduction de la photosynthèse et du rendement des fruits.',
+            'treatment': 'Appliquez un fongicide à base de cuivre.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
         },
-        "Powdery Mildew": {
-            "symptoms": "Poudre blanche sur les feuilles, croissance ralentie.",
-            "impact": "Affaiblissement de la plante et réduction de la photosynthèse.",
-            "treatment": "Utilisez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.",
-            "prevention": "Assurez une bonne circulation de l'air et évitez l'arrosage par le dessus.",
-            "reference_image": "assets/images/powdery_mildew_reference.png"
+        'Apple Black rot': {
+            'symptoms': 'Taches noires et pourriture sur les feuilles et les fruits.',
+            'impact': 'Provoque la chute prématurée des fruits et réduit le rendement.',
+            'treatment': 'Appliquez un fongicide à base de cuivre ou de soufre.',
+            'prevention': 'Éliminez les parties infectées et améliorez la circulation de l\'air.'
         },
-        # Ajoutez d'autres maladies ici
+        'Apple Cedar apple rust': {
+            'symptoms': 'Développement de pustules orange sur les feuilles.',
+            'impact': 'Affaiblissement de la plante et réduction du rendement.',
+            'treatment': 'Utilisez des fongicides appropriés et éliminez les plants hôtes.',
+            'prevention': 'Évitez l\'humidité excessive et améliorez la circulation de l\'air.'
+        },
+        'Blueberry healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Cherry Powdery mildew': {
+            'symptoms': 'Poudre blanche sur les feuilles et les bourgeons.',
+            'impact': 'Ralentit la croissance de la plante et réduit le rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.',
+            'prevention': 'Assurez une bonne circulation de l\'air et évitez l\'arrosage par le dessus.'
+        },
+        'Cherry healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Corn Cercospora leaf spot Gray leaf spot': {
+            'symptoms': 'Taches grises sur les feuilles avec des bords bruns.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les résidus de culture et améliorez la rotation des cultures.'
+        },
+        'Corn Common rust': {
+            'symptoms': 'Pustules rouges sur les feuilles.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Utilisez des variétés résistantes et pratiquez la rotation des cultures.'
+        },
+        'Corn Northern Leaf Blight': {
+            'symptoms': 'Taches longues et étroites sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Utilisez des variétés résistantes et pratiquez la rotation des cultures.'
+        },
+        'Corn healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Grape Black rot': {
+            'symptoms': 'Taches noires sur les feuilles, pourriture des raisins.',
+            'impact': 'Réduction de la qualité et du rendement des raisins.',
+            'treatment': 'Utilisez des fongicides spécifiques et retirez les parties infectées.',
+            'prevention': 'Assurez une bonne aération et évitez l\'excès d\'humidité.'
+        },
+        'Grape Esca Black Measles': {
+            'symptoms': 'Taches noires irrégulières sur les feuilles et les fruits.',
+            'impact': 'Affaiblissement de la plante et réduction du rendement.',
+            'treatment': 'Appliquez des fongicides et taillez les parties infectées.',
+            'prevention': 'Utilisez des variétés résistantes et améliorez la ventilation.'
+        },
+        'Grape Leaf blight Isariopsis Leaf Spot': {
+            'symptoms': 'Taches brunes sur les feuilles avec des bords jaunes.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Grape healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Orange Haunglongbing Citrus greening': {
+            'symptoms': 'Feuilles jaunies, fruits déformés et amers.',
+            'impact': 'Décimation de la plantation et réduction drastique du rendement.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Utilisez des variétés résistantes et contrôlez les insectes vecteurs.'
+        },
+        'Peach Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles, les fruits et les branches.',
+            'impact': 'Réduction de la photosynthèse et des rendements.',
+            'treatment': 'Appliquez des fongicides à base de cuivre.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Peach healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Pepper,_bell Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles et les fruits.',
+            'impact': 'Diminution de la qualité et du rendement des poivrons.',
+            'treatment': 'Utilisez des fongicides spécifiques et éliminez les plantes infectées.',
+            'prevention': 'Évitez l\'arrosage par le dessus et utilisez des variétés résistantes.'
+        },
+        'Pepper,_bell healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Potato Early blight': {
+            'symptoms': 'Taches brunes avec des anneaux concentriques sur les feuilles.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et pratiquez la rotation des cultures.'
+        },
+        'Potato Late blight': {
+            'symptoms': 'Taches noires et vertes sur les feuilles et les tubercules.',
+            'impact': 'Décimation rapide des plantations si non contrôlée.',
+            'treatment': 'Appliquez immédiatement des fongicides spécifiques.',
+            'prevention': 'Éliminez les plantes infectées et assurez une bonne aération.'
+        },
+        'Potato healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Raspberry healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Soybean healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        'Squash Powdery mildew': {
+            'symptoms': 'Poudre blanche sur les feuilles et les tiges.',
+            'impact': 'Ralentit la croissance de la plante et réduit le rendement.',
+            'treatment': 'Utilisez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.',
+            'prevention': 'Assurez une bonne circulation de l\'air et évitez l\'excès d\'humidité.'
+        },
+        'Strawberry Leaf scorch': {
+            'symptoms': 'Feuilles brûlées avec des bords brunis.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Utilisez des fongicides appropriés et améliorez la circulation de l\'air.',
+            'prevention': 'Éliminez les feuilles infectées et évitez l\'excès d\'humidité.'
+        },
+        'Tomato Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles, les tiges et les fruits.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides à base de cuivre.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Tomato Early blight': {
+            'symptoms': 'Taches brunes avec des anneaux concentriques sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et pratiquez la rotation des cultures.'
+        },
+        'Tomato Late blight': {
+            'symptoms': 'Taches noires et vertes sur les feuilles et les fruits.',
+            'impact': 'Décimation rapide des plantations si non contrôlée.',
+            'treatment': 'Appliquez immédiatement des fongicides spécifiques.',
+            'prevention': 'Éliminez les plantes infectées et assurez une bonne aération.'
+        },
+        'Tomato Leaf Mold': {
+            'symptoms': 'Croûte grise sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et de la vigueur de la plante.',
+            'treatment': 'Utilisez des fongicides spécifiques et améliorez la circulation de l\'air.',
+            'prevention': 'Éliminez les feuilles infectées et évitez l\'excès d\'humidité.'
+        },
+        'Tomato Septoria leaf spot': {
+            'symptoms': 'Taches brunes sur les feuilles avec des bords jaunes.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et assurez une bonne circulation de l\'air.'
+        },
+        'Tomato Spider mites Two-spotted spider mite': {
+            'symptoms': 'Petites taches jaunes et rougeâtres sur les feuilles, présence de toiles.',
+            'impact': 'Diminution de la photosynthèse et affaiblissement de la plante.',
+            'treatment': 'Utilisez des acaricides spécifiques ou des solutions naturelles comme le savon insecticide.',
+            'prevention': 'Maintenez une bonne hygiène de la plantation et surveillez régulièrement les plantes.'
+        },
+        'Tomato Target Spot': {
+            'symptoms': 'Taches circulaires brunes avec un anneau clair au centre.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Tomato Tomato Yellow Leaf Curl Virus': {
+            'symptoms': 'Feuilles jaunies et recroquevillées, croissance ralentie.',
+            'impact': 'Réduction sévère du rendement et de la qualité des fruits.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Contrôlez les vecteurs insectes et utilisez des variétés résistantes.'
+        },
+        'Tomato Tomato mosaic virus': {
+            'symptoms': 'Déformation des feuilles et des fruits, mosaïque de couleurs.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Utilisez des variétés résistantes et éliminez les plantes infectées.'
+        },
+        'Tomato healthy': {
+            'symptoms': 'Aucune maladie détectée.',
+            'impact': 'Plante en bonne santé.',
+            'treatment': 'Aucune action nécessaire.',
+            'prevention': 'Maintenez des conditions de culture optimales.'
+        },
+        # Ajoutez les 10 autres classes ici de manière similaire
     }
     return disease_details.get(disease_name, None)
+
+# Fonction pour prédire la maladie et obtenir les détails
+def predict_and_get_details(model, image_array, class_names):
+    try:
+        proba = model.predict(image_array)[0]
+        predicted_class_idx = np.argmax(proba)
+        predicted_proba = round(100 * proba[predicted_class_idx], 2)
+        predicted_class_name = class_names[predicted_class_idx]
+        return predicted_class_name, predicted_proba
+    except Exception as e:
+        st.error(f"Erreur lors de la prédiction : {e}")
+        return None, 0
 
 # Appliquer les styles personnalisés
 set_custom_style()
@@ -216,50 +362,37 @@ set_custom_style()
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
-model_choice = st.sidebar.selectbox(
-    "Choisissez un modèle :",
-    ["ResNet50 🍃", "MobileNetV2 🍃", "CNN 🍃"]  # Ajout de "CNN 🍃"
-)
-
-# Modèles avec l'extension .keras
-models = {
-    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25.keras",  # Ajout du .keras
-    "MobileNetV2": "models/Anas_Essai_1_MOB_L2.keras",  # Si c'est .keras
-    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61.keras",  # Si c'est .keras
+# Dictionnaire des chemins des modèles
+model_paths = {
+    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25.keras",
+    "MobileNetV2": "models/Anas_Essai_1_MOB_L2.keras",
+    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61.keras",
 }
 
-# Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
-normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50", "MobileNetV2" ou "CNN"
-model_path = models[normalized_model_choice]
+# Sélection du modèle
+selected_model = st.sidebar.selectbox("Choisissez un modèle :", list(model_paths.keys()))
 
-# Vérification de l'existence du modèle avant de le charger
-if not os.path.exists(model_path):
-    st.error(f"Le modèle n'a pas été trouvé à {model_path}")
-    model = None
-else:
-    try:
-        model = load_model(model_path)
-        print(f"Modèle {model_path} chargé avec succès")
-    except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
-        model = None
+# Chargement du modèle sélectionné
+model_path = model_paths.get(selected_model)
+classifier = load_classifier(model_path)
 
 # Description du modèle dans la sidebar
 model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
-    "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",  # Description pour CNN
+    "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",
 }
 
 st.sidebar.markdown(
     f"""
     <div style="color:black; font-size:16px;">
-        ℹ️ {model_descriptions[normalized_model_choice]}
+        ℹ️ {model_descriptions.get(selected_model, 'Modèle non décrit.')}
     </div>
     """,
     unsafe_allow_html=True
 )
 
+# Upload de l'image
 uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
 # Titre principal avec animation
@@ -272,19 +405,10 @@ st.markdown(
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
-        <ul class="custom-list">
-            <li>
-                <span class="number">1</span>
-                Téléchargez une image via la barre latérale.
-            </li>
-            <li>
-                <span class="number">2</span>
-                Sélectionnez un modèle dans le menu latéral.
-            </li>
-            <li>
-                <span class="number">3</span>
-                Le résultat s'affichera automatiquement après analyse.
-            </li>
+        <ul>
+            <li>Téléchargez une image via la barre latérale.</li>
+            <li>Sélectionnez un modèle dans le menu latéral.</li>
+            <li>Le résultat s'affichera automatiquement après analyse.</li>
         </ul>
     </div>
     """,
@@ -292,18 +416,24 @@ st.markdown(
 )
 
 # Analyse et résultats
-if uploaded_file and model:
+if uploaded_file and classifier:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
     with st.spinner("Analyse en cours... Veuillez patienter"):
-        input_shape = model.input_shape[1:3]
-        try:
-            image_array = preprocess_image(uploaded_file, target_size=input_shape)
-            predicted_class, confidence = predict_image(model, image_array)
-        except Exception as e:
-            st.error(f"Erreur lors du prétraitement ou de la prédiction de l'image : {e}")
+        input_shape = classifier.input_shape[1:3]
+        image_array = preprocess_image(uploaded_file, target_size=input_shape)
+        if image_array is not None:
+            predicted_class, confidence = predict_and_get_details(classifier, image_array, class_names)
+        else:
             predicted_class, confidence = None, 0
 
     if predicted_class:
+        # Nettoyer la prédiction
+        predicted_class_clean = clean_class_name(predicted_class)
+
+        # Récupérer les détails de la maladie
+        disease_details = get_disease_details(predicted_class_clean)
+
+        # Déterminer le style en fonction de la confiance
         if confidence >= 80:
             result_style = "result-success"
         elif confidence >= 50:
@@ -311,45 +441,28 @@ if uploaded_file and model:
         else:
             result_style = "result-error"
 
-        # Vérifier si la prédiction est "Sain" ou une maladie
-        if predicted_class.lower() == "sain" or predicted_class.lower() == "healthy":
+        recommendations = ""
+
+        if 'healthy' in predicted_class_clean.lower():
             diagnosis = "Feuille en bonne santé."
             recommendations = "<strong>Aucune action nécessaire.</strong>"
-            disease_details = None
-            reference_image_html = ""
         else:
-            diagnosis = f"Maladie détectée - {predicted_class}."
-            disease_details = get_disease_details(predicted_class)
+            diagnosis = f"Maladie détectée - {predicted_class_clean}."
             if disease_details:
-                symptoms = disease_details["symptoms"]
-                impact = disease_details["impact"]
-                treatment = disease_details["treatment"]
-                prevention = disease_details["prevention"]
-                reference_image_path = disease_details["reference_image"]
-
-                # Charger l'image de référence
-                if os.path.exists(reference_image_path):
-                    ref_image_base64 = get_image_base64(reference_image_path)
-                    reference_image_html = f'<img src="{ref_image_base64}" alt="Photo de référence" style="width:300px;">'
-                else:
-                    reference_image_html = "<p>⚠️ Image de référence non disponible.</p>"
-
                 recommendations = f"""
-                <strong>Symptômes :</strong> {symptoms}<br>
-                <strong>Impact :</strong> {impact}<br>
-                <strong>Traitement :</strong> {treatment}<br>
-                <strong>Prévention :</strong> {prevention}
+                <strong>Symptômes :</strong> {disease_details['symptoms']}<br>
+                <strong>Impact :</strong> {disease_details['impact']}<br>
+                <strong>Traitement :</strong> {disease_details['treatment']}<br>
+                <strong>Prévention :</strong> {disease_details['prevention']}
                 """
             else:
-                recommendations = "<strong>Aucune recommandation disponible.</strong>"
-                reference_image_html = ""
+                recommendations = "Aucune recommandation disponible. Veuillez consulter un expert agricole."
 
         # Message en cas d'incertitude
         if confidence < 50:
-            diagnosis = "Nous ne sommes pas sûrs du diagnostic."
-            recommendations = "Essayez de prendre une photo plus claire ou consultez un expert agricole."
-            reference_image_html = ""
+            st.warning("⚠️ La confiance dans la prédiction est faible. Essayez une photo plus claire ou consultez un expert.")
 
+        # Affichage des résultats
         st.markdown(
             f"""
             <div class="result-block {result_style}">
@@ -359,9 +472,6 @@ if uploaded_file and model:
                 <hr>
                 <div>
                     {recommendations}
-                </div>
-                <div style="margin-top: 10px;">
-                    {reference_image_html}
                 </div>
             </div>
             """,
@@ -375,23 +485,6 @@ else:
             """
             <div class="stWarning">
                 ⚠️ Veuillez télécharger une image valide.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-# Image animée
-image_path = "assets/images/imagecss.png"
-
-if not os.path.exists(image_path):
-    st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
-else:
-    image_base64 = get_image_base64(image_path)
-    if image_base64:
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 20px;">
-                <img src="{image_base64}" alt="Plant Animation" class="animated-image">
             </div>
             """,
             unsafe_allow_html=True
