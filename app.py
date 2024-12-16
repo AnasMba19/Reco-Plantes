@@ -85,6 +85,46 @@ def set_custom_style():
             vertical-align: middle;
             margin-right: 5px;
         }}
+
+        /* Nouvelle classe pour la section Résultat de l'Analyse */
+        .result-block {{
+            background-color: #2e8b57; /* Même couleur que "Bienvenue dans l'application !" */
+            color: white; /* Texte en blanc pour la lisibilité */
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }}
+
+        /* Styles supplémentaires selon la confiance */
+        .result-success {{
+            border: 2px solid #28a745;
+        }}
+        .result-warning {{
+            border: 2px solid #ffc107;
+        }}
+        .result-error {{
+            border: 2px solid #dc3545;
+        }}
+
+        /* Styles pour le bloc de bienvenue */
+        .content-block {{
+            background-color: #2e8b57; /* Couleur de fond */
+            color: white; /* Couleur du texte */
+            padding: 15px;
+            border-radius: 10px;
+        }}
+
+        .subtitle {{
+            font-size: 24px;
+            margin-bottom: 10px;
+        }}
+
+        .stWarning {{
+            background-color: #ffcc00;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -389,7 +429,7 @@ st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', uns
 # Instructions avec liste personnalisée
 st.markdown(
     """
-    <div class="content-block" style="background-color: #2e8b57; color: white; padding: 15px; border-radius: 10px;">
+    <div class="content-block">
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
@@ -453,7 +493,7 @@ if uploaded_file and classifier:
         # Affichage des résultats
         st.markdown(
             f"""
-            <div class="result-block {result_style}" style="background-color: #f0f8ff; padding: 15px; border-radius: 10px; margin-top: 20px;">
+            <div class="result-block {result_style}">
                 <h2 class="subtitle">Résultat de l'Analyse</h2>
                 <p><strong>Résultat :</strong> {diagnosis}</p>
                 <p><strong>Confiance :</strong> {confidence:.2f}%</p>
