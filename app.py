@@ -197,22 +197,24 @@ st.sidebar.title("Reco-Plantes")
 
 model_choice = st.sidebar.selectbox(
     "Choisissez un modèle :",
-    ["ResNet50 🖼️", "MobileNetV2 ⚡"]
+    ["ResNet50 🍃", "MobileNetV2 🍃", "CNN 🍃"]  # Ajout de "CNN 🍃"
 )
 
 # Modèles
 models = {
-    "ResNet50": "models/resnet50_model.keras",
-    "MobileNetV2": "models/mobilenetv2_model.keras",
+    "ResNet50": "models/phil_resnet_best_20241202_v7_epoch25",
+    "MobileNetV2": "models/Anas_Essai_1_MOB_L2",
+    "CNN": "models/phil_cnn_2_best_20241122_v1_epoch61",  # Ajout du modèle CNN
 }
 
 # Normaliser le choix du modèle pour correspondre aux clés du dictionnaire
-normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50" ou "MobileNetV2"
+normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50", "MobileNetV2" ou "CNN"
 model_path = models[normalized_model_choice]
 
 model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
+    "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",  # Description pour CNN
 }
 
 # Description du modèle dans la sidebar
