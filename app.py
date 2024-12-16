@@ -3,8 +3,7 @@ import streamlit as st
 import base64
 from PIL import Image
 import numpy as np
-import tensorflow as tf
-from tensorflow.lite import Interpreter  # Importer l'interpréteur TFLite
+from tensorflow.lite import Interpreter  # Utiliser l'interpréteur TFLite
 
 # Fonction pour appliquer les styles personnalisés
 def set_custom_style():
@@ -135,6 +134,7 @@ def load_tflite_model(model_path):
     try:
         interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
+        st.write(f"Modèle chargé : {model_path}")  # Pour débogage
         return interpreter
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle TFLite : {e}")
@@ -262,10 +262,16 @@ interpreter_resnet = load_tflite_model(model_local_path_resnet)
 interpreter_mobilenet = load_tflite_model(model_local_path_mobilenet)
 interpreter_cnn = load_tflite_model(model_local_path_cnn)
 
+# Vérification de la charge des modèles
+st.write("Interpréteurs chargés :")
+st.write(f"ResNet50 : {interpreter_resnet is not None}")
+st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
+st.write(f"CNN : {interpreter_cnn is not None}")
+
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
-# Dictionnaire des chemins des modèles
+# Dictionnaire des interpréteurs des modèles
 model_interpreters = {
     "ResNet50": interpreter_resnet,
     "MobileNetV2": interpreter_mobilenet,
