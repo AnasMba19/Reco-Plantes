@@ -142,23 +142,11 @@ def get_disease_details(disease_name):
             'treatment': 'Utilisez des fongicides appropriés et éliminez les plants hôtes.',
             'prevention': 'Évitez l\'humidité excessive et améliorez la circulation de l\'air.'
         },
-        'Blueberry healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
         'Cherry Powdery mildew': {
             'symptoms': 'Poudre blanche sur les feuilles et les bourgeons.',
             'impact': 'Ralentit la croissance de la plante et réduit le rendement.',
             'treatment': 'Appliquez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.',
             'prevention': 'Assurez une bonne circulation de l\'air et évitez l\'arrosage par le dessus.'
-        },
-        'Cherry healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
         },
         'Corn Cercospora leaf spot Gray leaf spot': {
             'symptoms': 'Taches grises sur les feuilles avec des bords bruns.',
@@ -178,12 +166,6 @@ def get_disease_details(disease_name):
             'treatment': 'Appliquez des fongicides spécifiques.',
             'prevention': 'Utilisez des variétés résistantes et pratiquez la rotation des cultures.'
         },
-        'Corn healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
         'Grape Black rot': {
             'symptoms': 'Taches noires sur les feuilles, pourriture des raisins.',
             'impact': 'Réduction de la qualité et du rendement des raisins.',
@@ -202,12 +184,6 @@ def get_disease_details(disease_name):
             'treatment': 'Appliquez des fongicides appropriés.',
             'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
         },
-        'Grape healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
         'Orange Haunglongbing Citrus greening': {
             'symptoms': 'Feuilles jaunies, fruits déformés et amers.',
             'impact': 'Décimation de la plantation et réduction drastique du rendement.',
@@ -220,23 +196,11 @@ def get_disease_details(disease_name):
             'treatment': 'Appliquez des fongicides à base de cuivre.',
             'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
         },
-        'Peach healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
         'Pepper,_bell Bacterial spot': {
             'symptoms': 'Taches brunes sur les feuilles et les fruits.',
             'impact': 'Diminution de la qualité et du rendement des poivrons.',
             'treatment': 'Utilisez des fongicides spécifiques et éliminez les plantes infectées.',
             'prevention': 'Évitez l\'arrosage par le dessus et utilisez des variétés résistantes.'
-        },
-        'Pepper,_bell healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
         },
         'Potato Early blight': {
             'symptoms': 'Taches brunes avec des anneaux concentriques sur les feuilles.',
@@ -249,24 +213,6 @@ def get_disease_details(disease_name):
             'impact': 'Décimation rapide des plantations si non contrôlée.',
             'treatment': 'Appliquez immédiatement des fongicides spécifiques.',
             'prevention': 'Éliminez les plantes infectées et assurez une bonne aération.'
-        },
-        'Potato healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
-        'Raspberry healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
-        },
-        'Soybean healthy': {
-            'symptoms': 'Aucune maladie détectée.',
-            'impact': 'Plante en bonne santé.',
-            'treatment': 'Aucune action nécessaire.',
-            'prevention': 'Maintenez des conditions de culture optimales.'
         },
         'Squash Powdery mildew': {
             'symptoms': 'Poudre blanche sur les feuilles et les tiges.',
@@ -339,8 +285,8 @@ def get_disease_details(disease_name):
             'impact': 'Plante en bonne santé.',
             'treatment': 'Aucune action nécessaire.',
             'prevention': 'Maintenez des conditions de culture optimales.'
-        },
-        # Ajoutez les 10 autres classes ici de manière similaire
+        }
+        # Ajoutez les 10 autres classes restantes ici de manière similaire
     }
     return disease_details.get(disease_name, None)
 
@@ -355,6 +301,48 @@ def predict_and_get_details(model, image_array, class_names):
     except Exception as e:
         st.error(f"Erreur lors de la prédiction : {e}")
         return None, 0
+
+# Liste des noms de classes (38 classes)
+class_names = [
+    'Apple___Apple_scab',
+    'Apple___Black_rot',
+    'Apple___Cedar_apple_rust',
+    'Apple___healthy',
+    'Blueberry___healthy',
+    'Cherry_(including_sour)___Powdery_mildew',
+    'Cherry_(including_sour)___healthy',
+    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
+    'Corn_(maize)___Common_rust_',
+    'Corn_(maize)___Northern_Leaf_Blight',
+    'Corn_(maize)___healthy',
+    'Grape___Black_rot',
+    'Grape___Esca_(Black_Measles)',
+    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
+    'Grape___healthy',
+    'Orange___Haunglongbing_(Citrus_greening)',
+    'Peach___Bacterial_spot',
+    'Peach___healthy',
+    'Pepper,_bell___Bacterial_spot',
+    'Pepper,_bell___healthy',
+    'Potato___Early_blight',
+    'Potato___Late_blight',
+    'Potato___healthy',
+    'Raspberry___healthy',
+    'Soybean___healthy',
+    'Squash___Powdery_mildew',
+    'Strawberry___Leaf_scorch',
+    'Strawberry___healthy',
+    'Tomato___Bacterial_spot',
+    'Tomato___Early_blight',
+    'Tomato___Late_blight',
+    'Tomato___Leaf_Mold',
+    'Tomato___Septoria_leaf_spot',
+    'Tomato___Spider_mites Two-spotted_spider_mite',
+    'Tomato___Target_Spot',
+    'Tomato___Tomato_Yellow_Leaf_Curl_Virus',
+    'Tomato___Tomato_mosaic_virus',
+    'Tomato___healthy'
+]
 
 # Appliquer les styles personnalisés
 set_custom_style()
@@ -401,7 +389,7 @@ st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', uns
 # Instructions avec liste personnalisée
 st.markdown(
     """
-    <div class="content-block" style="background-color: #2e8b57; color: white;">
+    <div class="content-block" style="background-color: #2e8b57; color: white; padding: 15px; border-radius: 10px;">
         <h2 class="subtitle">Bienvenue dans l'application !</h2>
         <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
         <p><strong>Comment utiliser :</strong></p>
@@ -465,7 +453,7 @@ if uploaded_file and classifier:
         # Affichage des résultats
         st.markdown(
             f"""
-            <div class="result-block {result_style}">
+            <div class="result-block {result_style}" style="background-color: #f0f8ff; padding: 15px; border-radius: 10px; margin-top: 20px;">
                 <h2 class="subtitle">Résultat de l'Analyse</h2>
                 <p><strong>Résultat :</strong> {diagnosis}</p>
                 <p><strong>Confiance :</strong> {confidence:.2f}%</p>
