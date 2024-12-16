@@ -59,6 +59,16 @@ def set_custom_style():
             to {{ opacity: 1; }}
         }}
 
+        /* Animation de zoom pour l'image */
+        .zoom-image {{
+            width: 150px; /* Ajustez la taille selon vos besoins */
+            transition: transform 0.5s;
+        }}
+
+        .zoom-image:hover {{
+            transform: scale(1.2);
+        }}
+
         /* Footer styles */
         footer {{
             text-align: center;
@@ -134,7 +144,6 @@ def load_tflite_model(model_path):
     try:
         interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
-        st.write(f"Modèle chargé : {model_path}")  # Pour débogage
         return interpreter
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle TFLite : {e}")
@@ -170,14 +179,163 @@ def get_disease_details(disease_name):
             'treatment': 'Appliquez un fongicide à base de cuivre.',
             'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
         },
-        # ... (Les autres classes restent inchangées)
+        'Apple Black rot': {
+            'symptoms': 'Taches noires et pourriture sur les feuilles et les fruits.',
+            'impact': 'Provoque la chute prématurée des fruits et réduit le rendement.',
+            'treatment': 'Appliquez un fongicide à base de cuivre ou de soufre.',
+            'prevention': 'Éliminez les parties infectées et améliorez la circulation de l\'air.'
+        },
+        'Apple Cedar apple rust': {
+            'symptoms': 'Développement de pustules orange sur les feuilles.',
+            'impact': 'Affaiblissement de la plante et réduction du rendement.',
+            'treatment': 'Utilisez des fongicides appropriés et éliminez les plants hôtes.',
+            'prevention': 'Évitez l\'humidité excessive et améliorez la circulation de l\'air.'
+        },
+        'Cherry Powdery mildew': {
+            'symptoms': 'Poudre blanche sur les feuilles et les bourgeons.',
+            'impact': 'Ralentit la croissance de la plante et réduit le rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.',
+            'prevention': 'Assurez une bonne circulation de l\'air et évitez l\'arrosage par le dessus.'
+        },
+        'Corn Cercospora leaf spot Gray leaf spot': {
+            'symptoms': 'Taches grises sur les feuilles avec des bords bruns.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les résidus de culture et améliorez la rotation des cultures.'
+        },
+        'Corn Common rust': {
+            'symptoms': 'Pustules rouges sur les feuilles.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Utilisez des variétés résistantes et pratiquez la rotation des cultures.'
+        },
+        'Corn Northern Leaf Blight': {
+            'symptoms': 'Taches longues et étroites sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Utilisez des variétés résistantes et pratiquez la rotation des cultures.'
+        },
+        'Grape Black rot': {
+            'symptoms': 'Taches noires sur les feuilles, pourriture des raisins.',
+            'impact': 'Réduction de la qualité et du rendement des raisins.',
+            'treatment': 'Utilisez des fongicides spécifiques et retirez les parties infectées.',
+            'prevention': 'Assurez une bonne aération et évitez l\'excès d\'humidité.'
+        },
+        'Grape Esca Black Measles': {
+            'symptoms': 'Taches noires irrégulières sur les feuilles et les fruits.',
+            'impact': 'Affaiblissement de la plante et réduction du rendement.',
+            'treatment': 'Appliquez des fongicides et taillez les parties infectées.',
+            'prevention': 'Utilisez des variétés résistantes et améliorez la ventilation.'
+        },
+        'Grape Leaf blight Isariopsis Leaf Spot': {
+            'symptoms': 'Taches brunes sur les feuilles avec des bords jaunes.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Orange Haunglongbing Citrus greening': {
+            'symptoms': 'Feuilles jaunies, fruits déformés et amers.',
+            'impact': 'Décimation de la plantation et réduction drastique du rendement.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Utilisez des variétés résistantes et contrôlez les insectes vecteurs.'
+        },
+        'Peach Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles, les fruits et les branches.',
+            'impact': 'Réduction de la photosynthèse et des rendements.',
+            'treatment': 'Appliquez des fongicides à base de cuivre.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Pepper,_bell Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles et les fruits.',
+            'impact': 'Diminution de la qualité et du rendement des poivrons.',
+            'treatment': 'Utilisez des fongicides spécifiques et éliminez les plantes infectées.',
+            'prevention': 'Évitez l\'arrosage par le dessus et utilisez des variétés résistantes.'
+        },
+        'Potato Early blight': {
+            'symptoms': 'Taches brunes avec des anneaux concentriques sur les feuilles.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et pratiquez la rotation des cultures.'
+        },
+        'Potato Late blight': {
+            'symptoms': 'Taches noires et vertes sur les feuilles et les tubercules.',
+            'impact': 'Décimation rapide des plantations si non contrôlée.',
+            'treatment': 'Appliquez immédiatement des fongicides spécifiques.',
+            'prevention': 'Éliminez les plantes infectées et assurez une bonne aération.'
+        },
+        'Squash Powdery mildew': {
+            'symptoms': 'Poudre blanche sur les feuilles et les tiges.',
+            'impact': 'Ralentit la croissance de la plante et réduit le rendement.',
+            'treatment': 'Utilisez des fongicides spécifiques ou des solutions à base de bicarbonate de soude.',
+            'prevention': 'Assurez une bonne circulation de l\'air et évitez l\'excès d\'humidité.'
+        },
+        'Strawberry Leaf scorch': {
+            'symptoms': 'Feuilles brûlées avec des bords brunis.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Utilisez des fongicides appropriés et améliorez la circulation de l\'air.',
+            'prevention': 'Éliminez les feuilles infectées et évitez l\'excès d\'humidité.'
+        },
+        'Tomato Bacterial spot': {
+            'symptoms': 'Taches brunes sur les feuilles, les tiges et les fruits.',
+            'impact': 'Diminution de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides à base de cuivre.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Tomato Early blight': {
+            'symptoms': 'Taches brunes avec des anneaux concentriques sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et pratiquez la rotation des cultures.'
+        },
+        'Tomato Late blight': {
+            'symptoms': 'Taches noires et vertes sur les feuilles et les fruits.',
+            'impact': 'Décimation rapide des plantations si non contrôlée.',
+            'treatment': 'Appliquez immédiatement des fongicides spécifiques.',
+            'prevention': 'Éliminez les plantes infectées et assurez une bonne aération.'
+        },
+        'Tomato Leaf Mold': {
+            'symptoms': 'Croûte grise sur les feuilles.',
+            'impact': 'Réduction de la photosynthèse et de la vigueur de la plante.',
+            'treatment': 'Utilisez des fongicides spécifiques et améliorez la circulation de l\'air.',
+            'prevention': 'Éliminez les feuilles infectées et évitez l\'excès d\'humidité.'
+        },
+        'Tomato Septoria leaf spot': {
+            'symptoms': 'Taches brunes sur les feuilles avec des bords jaunes.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides appropriés.',
+            'prevention': 'Éliminez les feuilles infectées et assurez une bonne circulation de l\'air.'
+        },
+        'Tomato Spider mites Two-spotted spider mite': {
+            'symptoms': 'Petites taches jaunes et rougeâtres sur les feuilles, présence de toiles.',
+            'impact': 'Diminution de la photosynthèse et affaiblissement de la plante.',
+            'treatment': 'Utilisez des acaricides spécifiques ou des solutions naturelles comme le savon insecticide.',
+            'prevention': 'Maintenez une bonne hygiène de la plantation et surveillez régulièrement les plantes.'
+        },
+        'Tomato Target Spot': {
+            'symptoms': 'Taches circulaires brunes avec un anneau clair au centre.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Appliquez des fongicides spécifiques.',
+            'prevention': 'Éliminez les feuilles infectées et améliorez la circulation de l\'air.'
+        },
+        'Tomato Tomato Yellow Leaf Curl Virus': {
+            'symptoms': 'Feuilles jaunies et recroquevillées, croissance ralentie.',
+            'impact': 'Réduction sévère du rendement et de la qualité des fruits.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Contrôlez les vecteurs insectes et utilisez des variétés résistantes.'
+        },
+        'Tomato Tomato mosaic virus': {
+            'symptoms': 'Déformation des feuilles et des fruits, mosaïque de couleurs.',
+            'impact': 'Réduction de la photosynthèse et du rendement.',
+            'treatment': 'Il n\'existe actuellement aucun traitement efficace.',
+            'prevention': 'Utilisez des variétés résistantes et éliminez les plantes infectées.'
+        },
         'Tomato healthy': {
             'symptoms': 'Aucune maladie détectée.',
             'impact': 'Plante en bonne santé.',
             'treatment': 'Aucune action nécessaire.',
             'prevention': 'Maintenez des conditions de culture optimales.'
         }
-        # Ajoutez les 10 autres classes restantes ici de manière similaire
+        # Ajoutez les autres classes restantes ici de manière similaire
     }
     return disease_details.get(disease_name, None)
 
@@ -262,12 +420,6 @@ interpreter_resnet = load_tflite_model(model_local_path_resnet)
 interpreter_mobilenet = load_tflite_model(model_local_path_mobilenet)
 interpreter_cnn = load_tflite_model(model_local_path_cnn)
 
-# Vérification de la charge des modèles
-st.write("Interpréteurs chargés :")
-st.write(f"ResNet50 : {interpreter_resnet is not None}")
-st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
-st.write(f"CNN : {interpreter_cnn is not None}")
-
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
@@ -306,8 +458,16 @@ else:
     # Upload de l'image
     uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-    # Titre principal avec animation
-    st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
+    # Titre principal avec animation et image
+    st.markdown(
+        """
+        <div class="header">
+            <h1 class="title">Reconnaissance de Maladies des Plantes</h1>
+            <img src="https://raw.githubusercontent.com/AnasMba19/Reco-Plantes/main/assets/images/imagecss.png" alt="Logo" class="zoom-image">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     # Instructions avec liste personnalisée
     st.markdown(
