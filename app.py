@@ -211,13 +211,23 @@ models = {
 normalized_model_choice = model_choice.split()[0]  # Extrait "ResNet50", "MobileNetV2" ou "CNN"
 model_path = models[normalized_model_choice]
 
+# Vérification de l'existence du modèle avant de le charger
+if not os.path.exists(model_path):
+    st.error(f"Le modèle n'a pas été trouvé à {model_path}")
+else:
+    try:
+        model = load_model(model_path)
+        print(f"Modèle {model_path} chargé avec succès")
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
+
+# Description du modèle dans la sidebar
 model_descriptions = {
     "ResNet50": "Modèle ResNet50 optimisé pour une précision élevée.",
     "MobileNetV2": "Modèle MobileNetV2, léger et rapide pour les applications mobiles.",
     "CNN": "Modèle CNN personnalisé pour une détection rapide des maladies.",  # Description pour CNN
 }
 
-# Description du modèle dans la sidebar
 st.sidebar.markdown(
     f"""
     <div style="color:black; font-size:16px;">
@@ -262,10 +272,12 @@ st.markdown(
 if uploaded_file:
     st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
     with st.spinner("Analyse en cours... Veuillez patienter"):
-        model = load_model(model_path)
         input_shape = model.input_shape[1:3]
-        image_array = preprocess_image(uploaded_file, target_size=input_shape)
-        predicted_class, confidence = predict_image(model, image_array)
+        try:
+            image_array = preprocess_image(uploaded_file, target_size=input_shape)
+            predicted_class, confidence = predict_image(model, image_array)
+        except Exception as e:
+            st.error(f"Erreur lors du prétraitement ou de la prédiction de l'image : {e}")
 
     if confidence >= 80:
         result_style = "result-success"
