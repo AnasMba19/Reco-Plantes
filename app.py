@@ -263,10 +263,10 @@ interpreter_mobilenet = load_tflite_model(model_local_path_mobilenet)
 interpreter_cnn = load_tflite_model(model_local_path_cnn)
 
 # Vérification de la charge des modèles
-st.write("Interpréteurs chargés :")
-st.write(f"ResNet50 : {interpreter_resnet is not None}")
-st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
-st.write(f"CNN : {interpreter_cnn is not None}")
+# st.write("Interpréteurs chargés :")
+# st.write(f"ResNet50 : {interpreter_resnet is not None}")
+# st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
+# st.write(f"CNN : {interpreter_cnn is not None}")
 
 # Sidebar
 st.sidebar.title("Reco-Plantes")
