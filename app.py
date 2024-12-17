@@ -1,4 +1,4 @@
-import os 
+import os  
 import streamlit as st
 import base64
 from PIL import Image
@@ -52,6 +52,7 @@ def set_custom_style():
         .title {{
             animation: fadeIn 2s ease-in-out;
             color: #004d00;
+            text-align: center;
         }}
 
         @keyframes fadeIn {{
@@ -123,10 +124,51 @@ def set_custom_style():
             padding: 10px;
             border-radius: 5px;
         }}
+
+        /* Animated image */
+        .animated-image {{
+            animation: rotateZoom 3s infinite ease-in-out;
+            display: block;
+            margin: 0 auto;
+            width: 250px; /* Taille ajustable */
+        }}
+
+        @keyframes rotateZoom {{
+            0% {{
+                transform: scale(1) rotate(0deg);
+            }}
+            50% {{
+                transform: scale(1.1) rotate(20deg);
+            }}
+            100% {{
+                transform: scale(1) rotate(0deg);
+            }}
+        }}
+
+        /* Responsive design */
+        @media (max-width: 768px) {{
+            .stApp {{
+                font-size: 14px;
+            }}
+            .animated-image {{
+                width: 150px; /* Taille ajustable pour les petits écrans */
+            }}
+        }}
+
         </style>
         """,
         unsafe_allow_html=True
     )
+
+# Fonction pour encoder l'image en base64
+def get_image_base64(image_path):
+    try:
+        with open(image_path, "rb") as image_file:
+            encoded = base64.b64encode(image_file.read()).decode()
+        return f"data:image/png;base64,{encoded}"
+    except Exception as e:
+        st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
+        return None
 
 # Fonction pour charger les modèles TFLite avec cache
 @st.cache_resource
@@ -134,7 +176,7 @@ def load_tflite_model(model_path):
     try:
         interpreter = Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
-       # st.write(f"Modèle chargé : {model_path}")  # Pour débogage
+        # st.write(f"Modèle chargé : {model_path}")  # Pour débogage
         return interpreter
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle TFLite : {e}")
@@ -476,12 +518,6 @@ interpreter_resnet = load_tflite_model(model_local_path_resnet)
 interpreter_mobilenet = load_tflite_model(model_local_path_mobilenet)
 interpreter_cnn = load_tflite_model(model_local_path_cnn)
 
-# Vérification de la charge des modèles
-# st.write("Interpréteurs chargés :")
-# st.write(f"ResNet50 : {interpreter_resnet is not None}")
-# st.write(f"MobileNetV2 : {interpreter_mobilenet is not None}")
-# st.write(f"CNN : {interpreter_cnn is not None}")
-
 # Sidebar
 st.sidebar.title("Reco-Plantes")
 
@@ -612,6 +648,23 @@ else:
                 """
                 <div class="stWarning">
                     ⚠️ Veuillez télécharger une image valide.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    # Animated image
+    image_path = "assets/images/imagecss.png"
+
+    if not os.path.exists(image_path):
+        st.error(f"⚠️ L'image '{image_path}' est introuvable. Vérifiez le chemin ou le dossier.")
+    else:
+        image_base64 = get_image_base64(image_path)
+        if image_base64:
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="{image_base64}" alt="Image Animée" class="animated-image">
                 </div>
                 """,
                 unsafe_allow_html=True
