@@ -593,6 +593,13 @@ else:
     # Upload de l'image
     uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
+    # Vérification et affichage des fichiers dans assets/images/ pour débogage
+    images_dir = "assets/images/"
+    if os.path.exists(images_dir):
+        st.write("Fichiers dans 'assets/images/':", os.listdir(images_dir))
+    else:
+        st.write(f"Le répertoire '{images_dir}' n'existe pas.")
+
     # Titre principal avec animation et logo
     # Encodage et affichage du logo
     logo_path = "assets/images/logo_recoplantes.png"
@@ -620,7 +627,6 @@ else:
         <div class="content-block">
             <h2 class="subtitle">Bienvenue dans l'application !</h2>
             <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
-            <p><strong>Comment utiliser :</strong></p>
             <ol>
                 <li>Téléchargez une image via la barre latérale.</li>
                 <li>Sélectionnez un modèle dans le menu latéral.</li>
