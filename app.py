@@ -602,7 +602,7 @@ else:
 
     # Titre principal avec animation et logo
     # Encodage et affichage du logo
-    logo_path = "assets/images/logo_recoplantes.png"
+    logo_path = "assets/images/logo_recoplantes.jpg"  # Modification ici de .png à .jpg
     if not os.path.exists(logo_path):
         st.error(f"⚠️ L'image '{logo_path}' est introuvable. Vérifiez le chemin ou le dossier.")
     else:
