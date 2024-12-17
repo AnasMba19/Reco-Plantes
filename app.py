@@ -593,12 +593,13 @@ else:
     # Upload de l'image
     uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-    # Vérification et affichage des fichiers dans assets/images/ pour débogage
-    images_dir = "assets/images/"
-    if os.path.exists(images_dir):
-        st.write("Fichiers dans 'assets/images/':", os.listdir(images_dir))
-    else:
-        st.write(f"Le répertoire '{images_dir}' n'existe pas.")
+# Vérification et affichage des fichiers dans assets/images/ pour débogage
+# images_dir = "assets/images/"
+# if os.path.exists(images_dir):
+#     st.write("Fichiers dans 'assets/images/':", os.listdir(images_dir))
+# else:
+#     st.write(f"Le répertoire '{images_dir}' n'existe pas.")
+
 
     # Titre principal avec animation et logo
     # Encodage et affichage du logo
