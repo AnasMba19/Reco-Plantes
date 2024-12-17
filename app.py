@@ -53,6 +53,9 @@ def set_custom_style():
             animation: fadeIn 2s ease-in-out;
             color: #004d00;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
 
         @keyframes fadeIn {{
@@ -155,6 +158,32 @@ def set_custom_style():
             }}
         }}
 
+        /* Styles for scroll buttons */
+        .scroll-button {{
+            position: fixed;
+            right: 20px;
+            background-color: #8B4513; /* Brown color */
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 1000;
+            opacity: 0.7;
+        }}
+
+        .scroll-button:hover {{
+            opacity: 1.0;
+        }}
+
+        #scroll-up {{
+            bottom: 70px;
+        }}
+
+        #scroll-down {{
+            bottom: 20px;
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -165,7 +194,15 @@ def get_image_base64(image_path):
     try:
         with open(image_path, "rb") as image_file:
             encoded = base64.b64encode(image_file.read()).decode()
-        return f"data:image/png;base64,{encoded}"
+        # Détecter le type d'image à partir de l'extension
+        ext = os.path.splitext(image_path)[1].lower()
+        if ext == ".png":
+            mime = "image/png"
+        elif ext in [".jpg", ".jpeg"]:
+            mime = "image/jpeg"
+        else:
+            mime = "image/png"  # Par défaut
+        return f"data:{mime};base64,{encoded}"
     except Exception as e:
         st.error(f"⚠️ Erreur lors de l'encodage de l'image : {e}")
         return None
@@ -556,8 +593,26 @@ else:
     # Upload de l'image
     uploaded_file = st.sidebar.file_uploader("Téléchargez une image", type=["jpg", "png"])
 
-    # Titre principal avec animation
-    st.markdown('<h1 class="title">Reconnaissance de Maladies des Plantes</h1>', unsafe_allow_html=True)
+    # Titre principal avec animation et logo
+    # Encodage et affichage du logo
+    logo_path = "assets/images/logo_recoplantes.png"
+    if not os.path.exists(logo_path):
+        st.error(f"⚠️ L'image '{logo_path}' est introuvable. Vérifiez le chemin ou le dossier.")
+    else:
+        logo_base64 = get_image_base64(logo_path)
+        if logo_base64:
+            st.markdown(
+                f"""
+                <div class="title">
+                    <img src="{logo_base64}" alt="Logo RecoPlantes" style="height: 60px; margin-right: 10px;">
+                    <h1>Reconnaissance des Maladies des Plantes</h1>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            # Si le logo n'est pas chargé, afficher uniquement le titre
+            st.markdown('<h1 class="title">Reconnaissance des Maladies des Plantes</h1>', unsafe_allow_html=True)
 
     # Instructions avec liste personnalisée
     st.markdown(
@@ -566,11 +621,11 @@ else:
             <h2 class="subtitle">Bienvenue dans l'application !</h2>
             <p>Cette application utilise des modèles d'apprentissage profond pour détecter les maladies des plantes à partir d'images.</p>
             <p><strong>Comment utiliser :</strong></p>
-            <ul>
+            <ol>
                 <li>Téléchargez une image via la barre latérale.</li>
                 <li>Sélectionnez un modèle dans le menu latéral.</li>
                 <li>Le résultat s'affichera automatiquement après analyse.</li>
-            </ul>
+            </ol>
         </div>
         """,
         unsafe_allow_html=True
@@ -670,16 +725,25 @@ else:
                 unsafe_allow_html=True
             )
 
+    # Ajouter les boutons de scroll (up et down)
+    st.markdown(
+        """
+        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="scroll-button" id="scroll-up">&#8679;</button>
+        <button onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })" class="scroll-button" id="scroll-down">&#8681;</button>
+        """,
+        unsafe_allow_html=True
+    )
+
     # Footer avec icônes
     st.markdown(
         """
         <footer>
             &copy; 2024 Reconnaissance des Maladies des Plantes | Développé par Leila BELMIR, Philippe BEUTIN et Anas MBARKI<br>
             <a href="https://github.com/AnasMba19/Reco-Plantes" target="_blank">
-                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub"> GitHub
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width:20px; vertical-align:middle; margin-right:5px;">GitHub
             </a> |
             <a href="https://streamlit.io" target="_blank">
-                <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit"> Streamlit
+                <img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit" style="width:20px; vertical-align:middle; margin-right:5px;">Streamlit
             </a>
         </footer>
         """,
